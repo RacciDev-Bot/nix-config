@@ -13,11 +13,10 @@ Guardian](../../../components/db_guardian.md), and automated password handling v
 
 The module is implemented across several files in `modules/nixos/server/database/`:
 
-- **Main file**: [default.nix](../../../../../modules/nixos/server/database/default.nix): Core options and connection management.
-- **Supporting file**: [postgres.nix](../../../../../modules/nixos/server/database/postgres.nix): PostgreSQL-specific provisioning and secrets.
-- **Supporting file**: [redis.nix](../../../../../modules/nixos/server/database/redis.nix): Redis-specific ID mappings and security.
-- **Supporting file**: [guardian.nix](../../../../../modules/nixos/server/database/guardian.nix): Lifecycle synchronisation
-  and the [DB Guardian](../../../components/db_guardian.md).
+- **Main file**: [default.nix](../../../../modules/nixos/server/database/default.nix): Core options and connection management.
+- **Supporting file**: [postgres.nix](../../../../modules/nixos/server/database/postgres.nix): PostgreSQL-specific provisioning and secrets.
+- **Supporting file**: [redis.nix](../../../../modules/nixos/server/database/redis.nix): Redis-specific ID mappings and security.
+- **Supporting file**: [guardian.nix](../../../../modules/nixos/server/database/guardian.nix): Lifecycle synchronisation and the [DB Guardian](../../../components/db_guardian.md).
 
 ### Options
 
@@ -55,8 +54,7 @@ Redis management uses a similar aggregation pattern:
 
 ### DB Guardian Coordination
 
-Lifecycle management is handled by the [DB Guardian](../../../components/db_guardian.md).
-A pre-shared key for guardian communication is managed via the `DB_GUARDIAN_PSK` SOPS secret.
+Lifecycle management is handled by the [DB Guardian](../../../components/db_guardian.md). Guardian communication is mutually authenticated TLS: the coordinator presents a client certificate, each guardian presents a per-host server certificate, and both sides trust only the DB Guardian Intermediate CA.
 
 - **On Clients**: Services that use these database modules are automatically bound to `db-databases.target`.
   This ensures they only start when the remote databases are reachable and stop before the databases go offline.
@@ -71,8 +69,8 @@ A pre-shared key for guardian communication is managed via the `DB_GUARDIAN_PSK`
 
 - `POSTGRES/<DB_NAME_UPPER>_PASSWORD`: Per-database role password, provisioned during `postgresql-setup`.
 - `REDIS/PASSWORD`: Shared password for the primary Redis instance.
-- `DB_GUARDIAN_PSK`: Pre-shared key for DB Guardian communication.
-  Rotating it restarts the guardian server on clients and the coordinator on the database host.
+- `db-guardian/CA_CERT`, `db-guardian/SERVER_CERT`, `db-guardian/SERVER_KEY`: Per-guardian-host TLS material, stored as binary SOPS files under `hosts/server/<host>/db-guardian-tls/`. Rotating any of them restarts `db-guardian.service` on that host.
+- `db-guardian/CLIENT_CERT`, `db-guardian/CLIENT_KEY`: Coordinator TLS material, stored under the database primary's host directory. Rotating either restarts `db-database-coordinator.service` on the primary.
 
 ## Operational Notes / Assumptions
 
@@ -84,3 +82,4 @@ A pre-shared key for guardian communication is managed via the `DB_GUARDIAN_PSK`
 ## References
 
 - [DB Guardian](../../../components/db_guardian.md)
+- [Database Coordinator](../../../hosts/server/nixdb.md)
