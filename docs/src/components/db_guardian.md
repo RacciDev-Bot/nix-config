@@ -130,10 +130,10 @@ Connections are mutually authenticated with TLS.
 There is no shared secret in the protocol: the coordinator proves its identity with a client certificate, and the guardian proves its own with a per-host server certificate.
 Both sides trust the **DB Guardian Intermediate CA** and nothing else, so a certificate issued by another service's intermediate is rejected during the handshake.
 
-| Identity | Leaf profile | Issued to | Allowed by the guardian |
-| ---------------------------- | ------------ | --------------------------------------------- | ----------------------- |
-| `<host>` guardian server | `serverAuth` | Every guardian host, one leaf each | n/a |
-| `db-guardian-coordinator` | `clientAuth` | The database primary host only | Common name allowlist |
+| Identity                  | Leaf profile | Issued to                          | Allowed by the guardian |
+| ------------------------- | ------------ | ---------------------------------- | ----------------------- |
+| `<host>` guardian server  | `serverAuth` | Every guardian host, one leaf each | n/a                     |
+| `db-guardian-coordinator` | `clientAuth` | The database primary host only     | Common name allowlist   |
 
 The guardian rejects a connection whose client certificate common name is not in `server.database.guardian.allowedClientCommonNames`, and refuses to start at all when that list is empty.
 An empty list is a Nix evaluation error, so a misconfigured generation cannot be built.
@@ -143,16 +143,35 @@ An empty list is a Nix evaluation error, so a misconfigured generation cannot be
 Certificate material is stored as binary SOPS files and passed to the units as systemd credentials.
 No secret is a YAML value.
 
-| Secret key | Owner | Group | Restart unit | Purpose |
-| ---------------------------- | ----- | ----- | -------------------------------- | ------------------------------------------- |
-| `db-guardian/CA_CERT` | root | root | `db-guardian.service` (clients), `db-database-coordinator.service` (coordinator) | Intermediate CA certificate used as the trust store |
-| `db-guardian/SERVER_CERT` | root | root | `db-guardian.service` | Server leaf and intermediate chain |
-| `db-guardian/SERVER_KEY` | root | root | `db-guardian.service` | Server leaf private key |
-| `db-guardian/CLIENT_CERT` | root | root | `db-database-coordinator.service` | Coordinator leaf and intermediate chain |
-| `db-guardian/CLIENT_KEY` | root | root | `db-database-coordinator.service` | Coordinator leaf private key |
+| Secret key                | Owner | Group | Restart unit                                                                     | Purpose                                             |
+| ------------------------- | ----- | ----- | -------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `db-guardian/CA_CERT`     | root  | root  | `db-guardian.service` (clients), `db-database-coordinator.service` (coordinator) | Intermediate CA certificate used as the trust store |
+| `db-guardian/SERVER_CERT` | root  | root  | `db-guardian.service`                                                            | Server leaf and intermediate chain                  |
+| `db-guardian/SERVER_KEY`  | root  | root  | `db-guardian.service`                                                            | Server leaf private key                             |
+| `db-guardian/CLIENT_CERT` | root  | root  | `db-database-coordinator.service`                                                | Coordinator leaf and intermediate chain             |
+| `db-guardian/CLIENT_KEY`  | root  | root  | `db-database-coordinator.service`                                                | Coordinator leaf private key                        |
 
 The files live in `hosts/server/<host>/db-guardian-tls/` and are encrypted to that host's recipients only, so a guardian cannot decrypt another guardian's key.
 Issue and rotate them with the procedure in [Internal mTLS CA](../security/internal_mtls_ca.md).
+
+### Provisioning certificates
+
+The `provision-db-guardian-certs` helper issues the guardian leaves and SOPS-encrypts them into `hosts/server/<host>/db-guardian-tls/`.
+It reads the DB Guardian intermediate certificate and key from a KeePassXC vault, so the offline key is never written to disk.
+Create the intermediate with the offline Fleet root key first, as described in [Internal mTLS CA](../security/internal_mtls_ca.md); the helper only issues leaves.
+
+```bash
+provision-db-guardian-certs --vault /path/to/fleet.kdbx
+```
+
+The guardian hosts and the database primary are derived from the flake.
+Every non-primary server with PostgreSQL or Redis databases receives `CA_CERT`, `SERVER_CERT`, and `SERVER_KEY`; the database primary receives `CA_CERT`, `CLIENT_CERT`, and `CLIENT_KEY`.
+Pass host names to restrict the guardian set, `--skip-client` to leave the coordinator certificate alone, or `--force` to rotate.
+Use `--vault-password-file` or `--vault-key-file` for a vault that is not prompted interactively.
+
+The helper selects the KeePassXC entry `intermediate/db-guardian/DB Guardian Intermediate CA` and reads the `cert.pem` and `key.pem` attachments.
+Override the entry with `--intermediate-entry`, or the attachment names with `--cert-attachment` and `--key-attachment`.
+Whatever the layout, the helper rejects a self-signed certificate or another service's intermediate before issuing anything.
 
 ## Operational Notes / Assumptions
 
