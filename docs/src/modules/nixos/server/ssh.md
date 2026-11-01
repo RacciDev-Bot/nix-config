@@ -11,7 +11,7 @@ ensuring consistent tooling and a powerful shell experience across server enviro
 - **Main file**: `modules/nixos/server/ssh-shell/default.nix`
 - **Supporting file**: `modules/nixos/server/ssh-shell/shell.nix`
 
-#### Options
+### Options
 
 {{#include ../../../../generated/server-ssh-shell-options.md}}
 

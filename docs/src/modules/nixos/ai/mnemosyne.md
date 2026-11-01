@@ -42,7 +42,7 @@ The module can run three kinds of services, each either natively on the host or 
 - **MCP server** (`mnemosyne mcp`) — adds the `mcp` and `anyio` dependencies via the package's optional `mcp` group.
 - **Sync client** — per-profile periodic sync to a remote server, driven by a systemd timer.
 
-#### Options
+### Options
 
 {{#include ../../../../generated/ai-services-mnemosyne-options.md}}
 

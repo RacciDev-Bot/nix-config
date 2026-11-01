@@ -8,7 +8,7 @@ Extensions to the standard NixOS Tailscale module, providing easier tag manageme
 
 - **Main file**: [tailscale.nix](../../../../../modules/nixos/services/tailscale.nix)
 
-#### Options
+### Options
 
 {{#include ../../../../generated/services-tailscale-options.md}}
 

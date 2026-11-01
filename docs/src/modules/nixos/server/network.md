@@ -9,7 +9,7 @@ allowing for centralised configuration of subnets and automatic propagation of t
 
 - **Main file**: `modules/nixos/server/network.nix`
 
-#### Options
+### Options
 
 {{#include ../../../../generated/server-network-options.md}}
 

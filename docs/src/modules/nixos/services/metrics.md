@@ -13,7 +13,7 @@ Their CPU, memory, load, and uptime metrics come from Prometheus, and their NixO
 - **Main file**: [metrics.nix](../../../../../modules/nixos/services/metrics.nix)
 - **Upstream**: [Hacompanion GitHub Repository](https://github.com/tobias-kuendig/hacompanion)
 
-#### Options
+### Options
 
 {{#include ../../../../generated/services-metrics-options.md}}
 

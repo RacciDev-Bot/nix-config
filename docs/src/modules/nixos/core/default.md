@@ -64,7 +64,6 @@ because the firewall rule translations only take effect under this backend and a
 - [Containers](containers.md)
 - [Display Manager](display_manager.md)
 - [Gaming](gaming.md)
-- [Generators](generators.md)
 - [Default Groups](default_groups.md)
 - [Locale](locale.md)
 - [Nix](nix.md)

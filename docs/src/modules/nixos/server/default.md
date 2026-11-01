@@ -90,6 +90,3 @@ New submodules should prefer the generic helpers for role-agnostic code.
 
 - [IO Coordinator](../../../hosts/server/nixio.md)
 - [Monitoring Coordinator](../../../hosts/server/nixmon.md)
-- [Database Coordinator](../../../hosts/server/nixdb.md)
-- [Storage Coordinator](../../../hosts/server/nixstor.md)
-- [Identity Coordinator](../../../hosts/server/nixauth.md)

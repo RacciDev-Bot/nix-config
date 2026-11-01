@@ -9,7 +9,7 @@ Managed EDR (Endpoint Detection and Response) platform that protects systems by 
 - **Main file**: [huntress.nix](../../../../../modules/nixos/services/huntress.nix)
 - **Upstream**: [Huntress Managed EDR](https://www.huntress.com/platform/managed-edr)
 
-#### Options
+### Options
 
 {{#include ../../../../generated/services-huntress-options.md}}
 

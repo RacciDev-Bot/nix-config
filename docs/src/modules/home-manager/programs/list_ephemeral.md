@@ -12,7 +12,7 @@ It integrates with Home-Manager to supply defaults, persisted paths, and program
 
 ## Architecture / Services / Scope
 
-##### Options
+### Options
 
 {{#include ../../../../generated/programs-list-ephemeral-options.md}}
 
@@ -49,13 +49,13 @@ Press `/` to enable search filtering.
 
 List mode:
 
-```
+```text
 list-ephemeral list
 ```
 
 Trace mode (runs a command and then opens TUI with traced ephemeral paths):
 
-```
+```text
 list-ephemeral trace -- <cmd> [args...]
 ```
 

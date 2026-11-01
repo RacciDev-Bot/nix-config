@@ -65,5 +65,4 @@ It runs the AI agent, local inference via Ollama, the Open WebUI chat interface,
 - [Open WebUI](https://github.com/open-webui/open-webui)
 - [Ollama](https://ollama.com)
 - [Mnemosyne](../../modules/nixos/ai/mnemosyne.md)
-- [Database Coordinator](../../hosts/server/nixdb.md)
 - [IO Coordinator](../../hosts/server/nixio.md)

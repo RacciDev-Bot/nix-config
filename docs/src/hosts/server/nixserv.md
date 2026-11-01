@@ -41,6 +41,4 @@ Other hosts configure `nix.distributedBuilds` and connect to it as a remote buil
 
 - [Attic](https://docs.attic.rs) — Nix binary cache server
 - [Distributed Builds](../../modules/nixos/server/distributed_builds.md)
-- [Database Coordinator](../../hosts/server/nixdb.md)
-- [Storage Coordinator](../../hosts/server/nixstor.md)
 - [IO Coordinator](../../hosts/server/nixio.md)

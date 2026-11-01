@@ -42,7 +42,7 @@ Where:
 
 **Examples:**
 
-```
+```text
 feat(filament): added Prusament_PLA
 refactor(process): updated Standard_0.2mm_Quality
 chore(machine): removed Prusa_MK4S

@@ -402,6 +402,3 @@ curl -s 'http://localhost:3100/loki/api/v1/labels' | jq
 
 - [IO Coordinator](../hosts/server/nixio.md)
 - [Monitoring Coordinator](../hosts/server/nixmon.md)
-- [Database Coordinator](../hosts/server/nixdb.md)
-- [Storage Coordinator](../hosts/server/nixstor.md)
-- [Identity Coordinator](../hosts/server/nixauth.md)

@@ -44,5 +44,4 @@ As the `monitoringPrimaryHost`, `nixmon` runs the collector services defined by 
 ## References
 
 - [Server Monitoring](../../components/server_monitoring.md)
-- [Identity Coordinator](../../hosts/server/nixauth.md)
 - [IO Coordinator](../../hosts/server/nixio.md)

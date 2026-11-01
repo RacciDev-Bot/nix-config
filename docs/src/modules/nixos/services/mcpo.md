@@ -9,7 +9,7 @@ Orchestrates Model Context Protocol (MCP) servers, providing a centralised way t
 - **Main file**: [mcpo.nix](../../../../../modules/nixos/ai/services/mcpo.nix)
 - **Upstream**: [MCPO GitHub Repository](https://github.com/open-webui/mcpo)
 
-#### Options
+### Options
 
 {{#include ../../../../generated/ai-services-mcpo-options.md}}
 

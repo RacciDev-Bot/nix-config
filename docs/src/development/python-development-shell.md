@@ -131,6 +131,6 @@ Ensure you're running within a proper devenv session, not in a sandboxed environ
 
 ## See Also
 
-- [Main development documentation](../src/development/)
+- [Default development shell](../development/default-development-shell.md)
 - [Nix Python packaging](https://nixos.org/manual/nixpkgs/stable/#chap-python)
 - [Devenv documentation](https://devenv.sh/)

@@ -8,9 +8,9 @@ Load skills as needed for detailed guidance on specific tasks.
 These rules take **absolute precedence** over any other considerations.
 Violating these rules is unacceptable under any circumstances.
 
-#### 1. 📝 Documentation Synchronisation (MANDATORY)
+### 1. 📝 Documentation Synchronisation (MANDATORY)
 
-```
+```text
 RULE: Documentation in docs/ MUST be updated simultaneously with code changes.
 STATUS: Non-negotiable. No exceptions.
 VERIFICATION: Always check docs/ before completing any task.
@@ -25,22 +25,22 @@ VERIFICATION: Always check docs/ before completing any task.
 
 **Example:**
 
-```
+```text
 If you modify: modules/nixos/services/tailscale.nix
 You MUST update: docs/modules/nixos/services/tailscale.md
 ```
 
-#### 2. 🧹 Code Formatting (MANDATORY)
+### 2. 🧹 Code Formatting (MANDATORY)
 
-```
+```text
 RULE: All code MUST be formatted with nix fmt before completeting any task.
 STATUS: Non-negotiable. No exceptions.
 VERIFICATION: Run `nix fmt .` before finalizing any changes.
 ```
 
-#### 3. ✅ Testing Before Submission (MANDATORY)
+### 3. ✅ Testing Before Submission (MANDATORY)
 
-```
+```text
 RULE: All affected configurations MUST be tested before completeling any task.
 STATUS: Non-negotiable. No exceptions.
 VERIFICATION: Reference the `test` agent and `testing` skill for guidance on identifying affected configurations and running appropriate tests.
@@ -76,7 +76,7 @@ Before testing, determine what your changes affect:
 
 ### Project Structure Overview
 
-```
+```text
 flake.nix           # Top-level flake
 modules/            # Reusable modules (nixos/, home-manager/)
 lib/                # Shared Nix functions

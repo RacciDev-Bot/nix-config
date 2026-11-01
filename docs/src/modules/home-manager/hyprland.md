@@ -14,7 +14,7 @@ They target the HM-native Lua configuration format (`configType = "lua"`), which
 
 The module structure is:
 
-```
+```text
 default.nix           # Top-level importer
 ├── permission.nix    # custom-settings.permission
 ├── slideIn.nix       # custom-settings.slideIn

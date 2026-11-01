@@ -34,8 +34,4 @@ General purpose application server for replacing cloud services with self-hosted
 ## References
 
 - [Server Module](../../modules/nixos/server/default.md)
-- [Identity Module](../../modules/nixos/server/identity.md)
 - [Proxy Module](../../modules/nixos/server/proxy.md)
-- [Identity Coordinator](../../hosts/server/nixauth.md)
-- [Database Coordinator](../../hosts/server/nixdb.md)
-- [Storage Coordinator](../../hosts/server/nixstor.md)

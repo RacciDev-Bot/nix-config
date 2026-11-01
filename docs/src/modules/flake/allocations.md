@@ -26,7 +26,7 @@ The allocation system has three layers:
 
 ### Data Flow
 
-```
+```text
 allocations.nix          flake-module.nix            apply/system.nix
 ┌──────────────┐   ┌──────────────────────┐   ┌───────────────────────┐
 │ Define opts  │──▶│ Set values           │──▶│ Map to NixOS options  │
@@ -87,6 +87,3 @@ It is currently a no-op — a placeholder for future home-manager-level allocati
 
 - [IO Coordinator](../../hosts/server/nixio.md)
 - [Monitoring Coordinator](../../hosts/server/nixmon.md)
-- [Database Coordinator](../../hosts/server/nixdb.md)
-- [Storage Coordinator](../../hosts/server/nixstor.md)
-- [Identity Coordinator](../../hosts/server/nixauth.md)

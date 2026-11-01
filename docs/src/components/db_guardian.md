@@ -104,7 +104,7 @@ Restarting the readiness check therefore restarts the target instead of leaving 
 
 The guardian uses a simple JSON-based WebSocket protocol:
 
-**Authentication**
+#### Authentication
 
 Client sends:
 
@@ -118,7 +118,7 @@ Server responds:
 { "type": "auth", "status": "ok", "message": "Authentication successful" }
 ```
 
-**Commands**
+#### Commands
 
 Coordinator sends one of the supported actions (`drain`, `undrain`, or `ping`):
 
@@ -212,7 +212,3 @@ systemctl stop db-databases.target
 
 - Ensure the same PSK is deployed to all servers
 - Re-encrypt secrets if the key was changed
-
-## References
-
-- [Database Coordinator](../hosts/server/nixdb.md)

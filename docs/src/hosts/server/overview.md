@@ -14,7 +14,6 @@ Documentation of the individual server host machines managed by this repository.
 - [NixDev](nixdev.md): Development, CI, and registry host
 - [NixIO](nixio.md): Ingress host, reverse proxy, and network gateway
 - [NixMon](nixmon.md): Monitoring and observability host
-- [NixStor](nixstor.md): Storage host, SeaweedFS evaluation
 
 ### Configuration Structure
 
@@ -29,4 +28,3 @@ Services are gated per host via flake allocations (see [Flake Allocations](../..
 ## References
 
 - [Adding a New Host](../../development/adding_a_new_host.md)
-- [Database Coordinator](nixdb.md)

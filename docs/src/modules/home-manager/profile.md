@@ -47,7 +47,7 @@ and written to `~/.config/noctalia/config.toml` — the clear-text address never
 - `core.profile.location.secret` — name of a SOPS secret (not a literal value) whose decrypted content supplies
   the Noctalia location address at activation time.
 
-#### Usage Example
+### Usage Example
 
 ```nix
 { ... }: {

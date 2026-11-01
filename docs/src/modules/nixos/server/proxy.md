@@ -18,7 +18,7 @@ and the primary IO host to ensure ports are open and traffic is correctly routed
 - **Supporting file**: `modules/nixos/server/proxy/extensions.nix`
 - **Supporting file**: `modules/nixos/server/proxy/extensions/l4.nix`
 
-#### Options
+### Options
 
 {{#include ../../../../generated/server-proxy-options.md}}
 

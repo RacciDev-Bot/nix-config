@@ -9,7 +9,7 @@ providing a coordinator host and several build machines to distribute the build 
 
 - **Main file**: `modules/nixos/server/distributed-builds.nix`
 
-#### Options
+### Options
 
 {{#include ../../../../generated/server-distributed-builds-options.md}}
 

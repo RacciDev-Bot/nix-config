@@ -4,7 +4,7 @@ This guide covers various installation scenarios for the nix-config repository.
 
 ## Windows Subsystem for Linux (WSL)
 
-### Prerequisites
+### WSL Prerequisites
 
 - Windows 10 version 2004 and higher (Build 19041 and higher) or Windows 11
 - WSL 2 enabled

@@ -13,7 +13,7 @@ The configuration lives in `.vale.ini`, `.rumdl.toml` and `ci/vale/`.
 | `ci/vale/styles/AU-English/SentencePerLine.yml` | the one-sentence-per-line rule                      |
 | `ci/vale/styles/config/dictionaries/`           | the dictionaries and allow-lists the rules read     |
 | `flake/dev/scripts/vale-tech-dictionary.nu`     | builds the `tech` dictionary from the cspell lists  |
-| `.rumdl.toml`                                   | enables the [rumdl] link-integrity rules            |
+| `.rumdl.toml`                                   | enables the [rumdl] link and structure rules        |
 
 ## Prose Layout
 
@@ -33,10 +33,12 @@ and `mdformat` reflowing a paragraph at a fixed width would put the sentences ba
 The rule skips tables and headings, because neither can hold a line break.
 A line that starts with emphasis can trip the rule, so start such a line with plain text.
 
-## Link Checks
+## Markup Checks
 
-[rumdl] checks links only. `.rumdl.toml` enables reversed link syntax, empty links, undefined references,
-unused definitions, whitespace in destinations, fragments that name no heading, and relative links that point at no file.
+[rumdl] checks links and heading structure. `.rumdl.toml` enables reversed link syntax, empty links, undefined
+references, unused definitions, whitespace in destinations, fragments that name no heading, relative links that point at
+no file, anchors that collide, heading levels that skip a level, emphasis used as a heading, fenced code that declares no
+language, and consecutive blank lines.
 It runs as `rumdl check docs/ AGENTS.md` in CI and from the git hook.
 
 Its line-length and reflow modes stay off: `AU-English/SentencePerLine` owns the sentence layout, and `mdformat` keeps the
@@ -81,7 +83,7 @@ The generated `AU-English/Terms.yml` rule enforces the documentation form of bot
 Nix writes host names without capitals, so `nix<rest>` becomes `Nix<Rest>`, with `nixio` and `nixai` as exceptions.
 A wrongly cased reference is reported as such rather than as a misspelling:
 
-```
+```text
 Use 'NixMon' rather than 'nixmon'.
 ```
 

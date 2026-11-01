@@ -71,7 +71,7 @@ The proxy wakes Sunshine and forwards to `127.0.0.1:47989`.
 
 #### Dependency Model
 
-```
+```text
 sunshine-proxy.socket (:48989)
     ↓ activates
 sunshine-proxy.service  ──bindsTo──→  sunshine.service (:47989)
@@ -81,7 +81,7 @@ No cycle: proxy starts Sunshine, proxy `bindsTo` Sunshine (proxy dies if Sunshin
 
 #### Firewall Flow
 
-```
+```text
 External client → TCP :47989
     ↓ (nftables nat prerouting redirect)
 Local port :48989
