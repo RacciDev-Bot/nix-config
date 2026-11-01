@@ -33,6 +33,16 @@ export def list_hosts [--fast, --include-current] {
   }
 }
 
+# List server hosts from hosts/server, excluding shared.
+export def list-server-hosts [] {
+  let dir = ($env.GIT_ROOT | path join "hosts" "server")
+  ^find $dir -mindepth 1 -maxdepth 1 -type d -print
+    | lines
+    | each {|path| $path | path basename }
+    | where {|name| $name != "shared" }
+    | sort
+}
+
 export def select_host [--fast] {
   let hosts = list_hosts --fast=$fast
   let all_hosts = ["current", ...($hosts)]

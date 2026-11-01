@@ -1,19 +1,20 @@
 #!/usr/bin/env nu
 
 use std/log
+use lib/common.nu *
 use lib/flake.nu *
 
 let FILE_LOCATION = $"($env.GIT_ROOT)/hosts/server/nixio/redis-mappings.json"
 const MAX_DATABASES = 16
 
 # Assign a numeric id to each service into range [0..max-1].
-# Uses sha256sum to pick an initial candidate, then linear-probes for a free slot.
+# Uses a hash of the service name to pick an initial candidate,
+# then linear-probes for a free slot.
 # Writes the mappings to a JSON file that is consumed by the redis database module.
 def main [
   --verbose
 ] {
-  log set-level (if $verbose { 10 } else { 20 })
-  $env.NU_LOG_FORMAT = "%ANSI_START%%LEVEL%|%MSG%%ANSI_STOP%"
+  setup-logging --verbose=$verbose
 
   mut existing: record<service: string, id: int> = {}
   mut used: list<int> = []
@@ -38,18 +39,14 @@ def main [
 
   mut available = 0..($MAX_DATABASES - 1) | where {|id| not ($used | any {|u| $id == $u }) }
   if ($available | length) < ($new | length) {
-    log error "Not enough available slots to assign new services"
-    log error $"Available slots: {($available | to json)}"
-    log error $"New services: {($new | to json)}"
-    exit 1
+    fail $"Not enough available slots to assign new services; available: {($available | to json)}; new services: {($new | to json)}"
   }
 
   mut new_mappings: record<service: string, id: int> = {}
   for service in $new {
     let id = assign-id $service $available
     if $id == null {
-      log error $"Failed to assign id for service ($service)"
-      exit 1
+      fail $"Failed to assign id for service ($service)"
     }
 
     log info $"Assigned ($service) -> ($id)"
@@ -98,19 +95,15 @@ def assign-id [
   service: string,
   available: list<int>,
 ] {
-  let slot = 0
-  mut found = false
-  while $found == false {
-    if ($available | where { $in == $slot } | length) > 0 {
-      $found = true
-    } else {
-      let slot = ($slot + 1) mod $MAX_DATABASES
-      if $slot == 0 {
-        # wrapped around, no slots available
-        return null
-      }
+  let digest = ($service | hash sha256 | str substring 0..7)
+  mut slot = (($digest | into int --radix 16) mod $MAX_DATABASES)
+
+  for _ in 0..($MAX_DATABASES - 1) {
+    if $slot in $available {
+      return $slot
     }
+    $slot = ($slot + 1) mod $MAX_DATABASES
   }
 
-  return $slot
+  null
 }

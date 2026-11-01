@@ -1,6 +1,7 @@
 #!/usr/bin/env nu
 
 use std/log
+use lib/common.nu *
 use lib/flake.nu *
 
 const SOPS_FILE = ".sops.yaml"
@@ -15,8 +16,11 @@ def main [
   --update-secrets
   --verbose
 ] {
-  log set-level (if $verbose { 10 } else { 20 })
-  $env.NU_LOG_FORMAT = "%ANSI_START%%LEVEL%|%MSG%%ANSI_STOP%"
+  setup-logging --verbose=$verbose
+
+  if $check and $update_secrets {
+    fail "--check cannot be combined with --update-secrets"
+  }
 
   let hosts = discover-hosts
   let users = discover-users
@@ -36,20 +40,17 @@ def main [
   let keys_changed = $current_keys != $rendered_keys
   let sops_changed = $current_sops != $rendered_sops
 
-  if $check and $update_secrets {
-    log error "--check cannot be combined with --update-secrets"
-    exit 1
-  }
-
   if not $keys_changed and not $sops_changed and not $update_secrets {
     log info $"($AGE_KEYS_FILE) and ($SOPS_FILE) are up to date"
     exit 0
   }
 
   if $check {
-    if $keys_changed { log error $"($AGE_KEYS_FILE) is out of date" }
-    if $sops_changed { log error $"($SOPS_FILE) is out of date" }
-    exit 1
+    let stale = [
+      (if $keys_changed { $AGE_KEYS_FILE })
+      (if $sops_changed { $SOPS_FILE })
+    ] | compact
+    fail $"Out of date: ($stale | str join ', ')"
   }
 
   if $keys_changed {
@@ -73,6 +74,7 @@ def main [
 def discover-hosts [] {
   let hosts_root = ($env.GIT_ROOT | path join "hosts")
   glob ($hosts_root | path join "*" "*" $HOST_KEY_FILE)
+    | where {|key_path| ($key_path | path dirname | path basename) != "shared" }
     | each {|key_path|
       let host_dir = ($key_path | path dirname)
       let relative_dir = ($host_dir | path relative-to $env.GIT_ROOT)
@@ -122,8 +124,7 @@ def get-personal-age-key [homes] {
   let personal = $homes | where name == $env.CURRENT_USER
   if ($personal | is-empty) {
     let key_path = ($env.GIT_ROOT | path join "home" $env.CURRENT_USER $HOME_KEY_FILE)
-    log error $"Missing ($key_path); cannot identify current user age key"
-    exit 1
+    fail $"Missing ($key_path); cannot identify current user age key"
   }
   $personal | get recipient | first
 }
@@ -158,8 +159,7 @@ def update-secret-files [secret_files: list<string>] {
     try {
       ^sops updatekeys --yes $file
     } catch {|err|
-      log error $"Failed to update SOPS recipients in ($file): ($err)"
-      exit 1
+      fail $"Failed to update SOPS recipients in ($file): ($err)"
     }
   }
 }
@@ -172,8 +172,7 @@ def convert-public-key [key_path: string] {
     }
     $recipient
   } catch {|err|
-    log error $"Failed to convert public key ($key_path): ($err.msg)"
-    exit 1
+    fail $"Failed to convert public key ($key_path): ($err.msg)"
   }
 }
 

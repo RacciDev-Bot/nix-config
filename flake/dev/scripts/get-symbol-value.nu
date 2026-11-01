@@ -1,6 +1,6 @@
 #!/usr/bin/env -S nix shell nixpkgs#nushell --command nu
 
-use std/log
+use lib/flake.nu *
 
 const NOT_HOME_FILES = [
   "os-config.nix"
@@ -10,13 +10,11 @@ def main [
   symbol: string,
   file: string
 ] {
-  let git_root = git rev-parse --show-toplevel
-  let file_path = $file | str trim
-  let relative_path = $file | str replace $"($git_root)/" "" | str trim
+  let relative_path = ($file | str trim | str replace $"($env.GIT_ROOT)/" "")
 
-  mut host = cat /etc/hostname | str trim
+  mut host = $env.CURRENT_HOST
   if ($relative_path | str starts-with "hosts/") {
-    $host = $relative_path | split row '/' | get 3
+    $host = $relative_path | split row '/' | get 2
   }
 
   mut home = null
@@ -30,15 +28,11 @@ def main [
     }
   }
 
-  let configAttr = if $home != null {
+  let config_attr = if $home != null {
     $"homeConfigurations.($home).config"
   } else {
     $"nixosConfigurations.($host).config"
   }
 
-  (nix eval --quiet --raw --no-pure-eval --expr $'
-  let
-    flake = builtins.getFlake "($git_root)";
-  in flake.($configAttr).($symbol)
-  ') e> /dev/null
+  (flake-eval $"flake.($config_attr).($symbol)" --raw) e> /dev/null | str trim
 }

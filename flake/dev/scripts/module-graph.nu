@@ -5,7 +5,7 @@ use lib/flake.nu
 
 def main [] {
   log info "Getting flake information..."
-  let flake_info = get_flake_info
+  let flake_info = discover-outputs
 
   log info "Getting host configurations..."
   let hosts = get_hosts $flake_info.hosts $flake_info.source
@@ -19,7 +19,7 @@ def main [] {
   $all_modules | to json
 }
 
-def get_flake_info [] {
+def discover-outputs [] {
   let hosts = try {
     log debug "Evaluating nixosConfigurations (attr names)"
     nix eval --json .#nixosConfigurations --apply 'builtins.attrNames' | from json
@@ -54,8 +54,7 @@ def get_hosts [
       let imports = flake get_output_graph_files $"nixosConfigurations.($host)" $flake_source
       $acc | insert $host $imports
     } catch { |err|
-      log warning $"Failed to get imports for host: ($host) - ($err)"
-      $acc | insert $host []
+      error make { msg: $"Failed to get imports for host ($host): ($err)" }
     }
   }
 
@@ -72,8 +71,7 @@ def get_homes [
       let imports = flake get_output_graph_files $"homeConfigurations.($home)" $flake_source
       $acc | insert $home $imports
     } catch { |err|
-      log warning $"Failed to get imports for home: ($home) - ($err)"
-      $acc | insert $home []
+      error make { msg: $"Failed to get imports for home ($home): ($err)" }
     }
   }
 

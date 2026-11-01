@@ -40,7 +40,7 @@ When `--db` already exists, the command copies it to `<db>.bak-<timestamp>` befo
 provision-db-guardian-certs --vault pki.kdbx --vault-password-file vault-pass nixcloud
 ```
 
-It writes `hosts/server/<host>/db-guardian-tls/{CA_CERT,SERVER_CERT,SERVER_KEY}`, adds `CLIENT_CERT` and `CLIENT_KEY` for the primary, and encrypts every file with `sops`. Hosts and the primary default to the values derived from the flake. Use `--skip-client` to omit the coordinator certificate, `--force` to rotate files that already exist, and `--dry-run` to print the plan.
+It writes `hosts/server/<host>/db-guardian-tls/{CA_CERT,SERVER_CERT,SERVER_KEY}`, adds `CLIENT_CERT` and `CLIENT_KEY` for the primary, and encrypts every file with `sops`. Hosts and the primary default to the values derived from the flake. The coordinator certificate is issued by default; use `--skip-client` to omit it, `--include-client` to state that explicitly, `--force` to rotate files that already exist, and `--dry-run` to print the plan.
 
 Newly issued leaves are merged into the same KeePassXC vault under `leafs/<intermediate-slug>` through `pki2kdbx`, so the vault holds every certificate it issues. The merge backs the vault up to `<db>.bak-<timestamp>` first. The intermediate itself is read from `intermediate/<slug>/<common name>` using its `cert.pem` and `key.pem` attachments; override the entry, common name, or attachment names with the matching flags.
 

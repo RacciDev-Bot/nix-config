@@ -146,7 +146,7 @@ provision-alloy-certs --vault pki.kdbx --vault-password-file vault-pass nixdb ni
 The vault must contain `root/Fleet mTLS Root CA` with a `cert.pem` attachment and `intermediate/alloy-dynamic-capture/Alloy Dynamic Capture Intermediate CA` with `cert.pem` and `key.pem` attachments.
 Override them with `--root-entry` / `--root-common-name` and `--intermediate-entry` / `--intermediate-common-name`. The root and intermediate are validated against those common names before anything is issued.
 
-Pass `--include-client` to also reissue the `nixmon` relay client certificate.
+Pass `--include-client` to also reissue the `nixmon` relay client certificate; the client certificate is skipped by default, and `--skip-client` states that explicitly.
 Leaves are stored under `leafs/alloy-dynamic-capture` with `cert.pem` and `key.pem` attachments, and the vault is backed up to `<db>.bak-<timestamp>` before each merge.
 The manual procedure below remains the reference for the certificate profiles.
 

@@ -1,24 +1,25 @@
 #!/usr/bin/env -S nix shell nixpkgs#nushell --command nu
 
 use std/log
+use lib/common.nu *
 
 def main [
   subcommand: string, # Either "eval" or "build"
   --base_ref: string = "HEAD", # Git ref to compare against; can be a branch, tag, or commit hash
   --dry, # If set, will only print the targets that would be built, without actually building them
   --minimal, # Build only one target per changed file, even if multiple hosts/homes reference it; This will always select the first host/home in alphabeltical order
-  --optimised, # W.I.P; Do not use! If set, will only evaluate options changed inside the changed files, rather than evalutating entire host/home configurations
+  --optimised, # Not implemented; exits with an error
   ...nix_args # Additional arguments to pass to `nix build`
 ] {
   let repo_root = goto_repo_root $base_ref
   let changes = get_changes $base_ref
-  let modules = get_modules
+  let modules = get_modules $repo_root
 
   if $optimised {
-    run_optimised $subcommand $changes $modules $minimal $dry $nix_args $repo_root
-  } else {
-    run_standard $subcommand $changes $modules $minimal $dry $nix_args $repo_root
+    fail "--optimised is not implemented"
   }
+
+  run_standard $subcommand $changes $modules $minimal $dry $nix_args $repo_root
 
   close
 }
@@ -61,8 +62,8 @@ def get_changes [base_ref: string] {
   $changed_files
 }
 
-def get_modules [] {
-  let modules = ./flake/dev/scripts/module-graph.nu e> /dev/null | from json
+def get_modules [repo_root: string] {
+  let modules = ($repo_root | path join "flake/dev/scripts/module-graph.nu") e> /dev/null | from json
   $modules
 }
 
@@ -112,17 +113,14 @@ def run_standard [
 
   $targets = ($targets | uniq)
   if ($targets | length) == 0 {
-    log info "No nix targets determined from changed files. Exiting."
-    exit 0
+    close "No nix targets determined from changed files."
   }
 
   log info "Selected nix build targets:"
   for t in $targets { log info $"  ($t)" }
 
   if $dry {
-    log info "Dry-run enabled; not executing nix build."
-    cd -
-    exit 0
+    close "Dry-run enabled; not executing nix build."
   }
 
   let command_args = [
@@ -140,62 +138,3 @@ def run_standard [
   }
 }
 
-# Optimised mode:
-# - consider only .nix files from the change list
-# - for each host/home, evaluate only options whose declarations include the changed file
-# - when the file is a module (present in module-graph), limit the search to hosts/homes that import it
-def run_optimised [
-  subcommand: string,
-  changed_files: list,
-  modules: table,
-  minimal: bool,
-  dry: bool,
-  nix_args: list,
-  repo_root: string
-] {
-  let nix_changed = ($changed_files | where { |f| $f | str ends-with ".nix" } | uniq)
-  if ($nix_changed | length) == 0 {
-    log info "Optimised mode: no .nix files changed; nothing to evaluate."
-    return
-  }
-
-  log info "Optimised mode: evaluating changed options for .nix files"
-
-  for file in $nix_changed {
-    let possible_modules = ($modules | where { $in.file == $file })
-    let file_is_module = (($possible_modules | length) > 0)
-
-    mut hosts_to_check = []
-    mut homes_to_check = []
-    if $file_is_module {
-      let m = ($possible_modules | first)
-      $hosts_to_check = $m.hosts
-      $homes_to_check = $m.homes
-    } else {
-      log warning $"File '($file)' is not in module graph; Skipping..."
-      continue
-    }
-
-    if $minimal {
-      if ($hosts_to_check | length) > 0 { $hosts_to_check = [ ($hosts_to_check | sort | first) ] }
-      if ($homes_to_check | length) > 0 { $homes_to_check = [ ($homes_to_check | sort | first) ] }
-    }
-
-    mut configurations = $nix_changed
-    mut nix_modules = {}
-    for file in $nix_changed {
-      let parsed = try {
-        nix-instantiate --parse $file e> /dev/null | from json
-      } catch {
-        log error $"Unable to parse file '($file)'; skipping."
-        continue
-      }
-
-      let file_options = $parsed | get -o body.body.attrs.options
-      if ($file_options == null) { continue }
-
-      $nix_modules ++= ({ $file: $file_options })
-      $configurations -= $file
-    }
-  }
-}
