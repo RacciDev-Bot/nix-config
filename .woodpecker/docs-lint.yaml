@@ -7,6 +7,7 @@ when:
     path:
       - "docs/**"
       - "AGENTS.md"
+      - ".rumdl.toml"
       - "ci/vale/**"
       - "flake/dev/scripts/**"
       - ".vale.ini"
@@ -17,7 +18,14 @@ steps:
   - name: Vale
     image: registry.racci.dev/lix-woodpecker:latest
     pull: true
+    depends_on: [] # Parallelise
     commands: |
       nix run .#install-vale-dictionaries
 
       nix run nixpkgs#vale -- docs/ AGENTS.md
+
+  - name: rumdl
+    image: registry.racci.dev/lix-woodpecker:latest
+    pull: true
+    commands: |
+      nix run nixpkgs#rumdl -- check docs/ AGENTS.md

@@ -68,6 +68,4 @@ a Docker registry, and a ForgeSync mirror job.
 - [Woodpecker CI](https://woodpecker-ci.org)
 - [Coder](https://coder.com)
 - [n8n](https://n8n.io)
-- [Database Coordinator](../../hosts/server/nixdb.md)
-- [Storage Coordinator](../../hosts/server/nixstor.md)
 - [IO Coordinator](../../hosts/server/nixio.md)

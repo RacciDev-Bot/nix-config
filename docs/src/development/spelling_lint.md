@@ -1,7 +1,7 @@
 # Prose Lint
 
 Prose in `docs/` and `AGENTS.md` is checked with [Vale], using an Australian English spelling style and a sentence-per-line layout.
-The configuration lives in `.vale.ini` and `ci/vale/`.
+The configuration lives in `.vale.ini`, `.rumdl.toml` and `ci/vale/`.
 
 ## Layout
 
@@ -13,6 +13,7 @@ The configuration lives in `.vale.ini` and `ci/vale/`.
 | `ci/vale/styles/AU-English/SentencePerLine.yml` | the one-sentence-per-line rule                      |
 | `ci/vale/styles/config/dictionaries/`           | the dictionaries and allow-lists the rules read     |
 | `flake/dev/scripts/vale-tech-dictionary.nu`     | builds the `tech` dictionary from the cspell lists  |
+| `.rumdl.toml`                                   | enables the [rumdl] link-integrity rules            |
 
 ## Prose Layout
 
@@ -31,6 +32,18 @@ and `mdformat` reflowing a paragraph at a fixed width would put the sentences ba
 
 The rule skips tables and headings, because neither can hold a line break.
 A line that starts with emphasis can trip the rule, so start such a line with plain text.
+
+## Link Checks
+
+[rumdl] checks links only. `.rumdl.toml` enables reversed link syntax, empty links, undefined references,
+unused definitions, whitespace in destinations, fragments that name no heading, and relative links that point at no file.
+It runs as `rumdl check docs/ AGENTS.md` in CI and from the git hook.
+
+Its line-length and reflow modes stay off: `AU-English/SentencePerLine` owns the sentence layout, and `mdformat` keeps the
+manual wraps.
+
+`mdBook` generates the search page at build time, so the link to it has no source file to resolve against.
+`[per-file-ignores]` excludes `MD057` for `docs/src/index.md` and `docs/src/SUMMARY.md`, and for nothing else.
 
 ## Dictionaries
 
@@ -98,4 +111,5 @@ To allow a term:
 1. Add a list to `vale-tech-dictionary.nu` when a whole category of vocabulary is missing, and re-check that no US spelling starts passing.
 
 [cspell]: https://cspell.org
+[rumdl]: https://rumdl.dev
 [vale]: https://vale.sh

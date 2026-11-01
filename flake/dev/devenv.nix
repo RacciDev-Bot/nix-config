@@ -44,6 +44,7 @@
                 nix-update
                 nixd
                 openspec
+                rumdl
                 sbctl
                 sops
                 ssh-to-age
@@ -87,6 +88,7 @@
               ssh-to-age
 
               vale
+              rumdl
               hunspellDicts.en_AU-large
             ]
             ++ config.treefmt.build.devShell.buildInputs
@@ -118,6 +120,13 @@
                 enable = true;
                 name = "vale";
                 entry = lib.getExe pkgs.vale;
+                files = "\\.md$";
+              };
+
+              rumdl = {
+                enable = true;
+                name = "rumdl";
+                entry = "${lib.getExe pkgs.rumdl} check";
                 files = "\\.md$";
               };
 

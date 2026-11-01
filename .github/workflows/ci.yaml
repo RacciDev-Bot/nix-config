@@ -33,6 +33,13 @@ jobs:
             nix run .#install-vale-dictionaries
             vale docs/ AGENTS.md
 
+      - name: rumdl
+        uses: workflow/nix-shell-action@031bcb0eb0396e0a585e86906809af10fe3bd499 # v4.0.0
+        with:
+          flakes: nixpkgs#rumdl
+          script: |
+            rumdl check docs/ AGENTS.md
+
   generate-matrix:
     runs-on: self-hosted
     outputs:

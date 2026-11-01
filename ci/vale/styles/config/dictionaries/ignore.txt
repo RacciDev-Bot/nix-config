@@ -45,6 +45,7 @@ pytest
 Radarr
 Readarr
 ROCm
+rumdl
 Sabnzbd
 SearXNG
 SeaweedFS
