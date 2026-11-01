@@ -5,8 +5,21 @@
 }:
 let
   inherit (lib.mine.packages) writeNuApplicationWithLibs;
+
+  pki2kdbx = pkgs.writeShellApplication {
+    name = "pki2kdbx";
+    runtimeInputs = [
+      (pkgs.python3.withPackages (ps: [ ps.cryptography ]))
+      pkgs.keepassxc
+    ];
+    text = ''
+      exec python3 ${./pki2kdbx.py} "$@"
+    '';
+  };
 in
 {
+  inherit pki2kdbx;
+
   install-vale-dictionaries = writeNuApplicationWithLibs {
     inherit pkgs;
     sourceRoot = ./.;
@@ -55,6 +68,36 @@ in
     runtimeInputs = [
       pkgs.sops
       pkgs.ssh-to-age
+    ];
+  };
+
+  provision-alloy-certs = writeNuApplicationWithLibs {
+    inherit pkgs;
+    sourceRoot = ./.;
+    name = "provision-alloy-certs";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.git
+      pkgs.keepassxc
+      pkgs.lix
+      pkgs.openssl
+      pkgs.sops
+      pki2kdbx
+    ];
+  };
+
+  provision-db-guardian-certs = writeNuApplicationWithLibs {
+    inherit pkgs;
+    sourceRoot = ./.;
+    name = "provision-db-guardian-certs";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.git
+      pkgs.keepassxc
+      pkgs.lix
+      pkgs.openssl
+      pkgs.sops
+      pki2kdbx
     ];
   };
 }
