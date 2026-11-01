@@ -198,10 +198,18 @@ TagByMatch(Tags.diaglogueModal, {
   Title("^(Library)(.*)$", {}, false),
   Title("^(File Upload)(.*)$", {}, false),
   Title("(?i)^(.*)(wants to save)$"),
+
   -- This is the 1password access requested window.
   -- The primary window is never titled as 1Password.
   Title("1Password"),
   Title("Quick Access — 1Password")
+
+  -- FreeCad modals follow a pattern of always using the same class,
+  -- but the main window always uses a title in the format "FreeCAD [version]".
+  {
+    class = "org.freecad.FreeCAD",
+    title = "^(?!FreeCAD)(.*)$",
+  }
 })
 
 TagByMatch(Tags.barDropdown, {
