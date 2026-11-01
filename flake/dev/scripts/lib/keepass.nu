@@ -135,7 +135,7 @@ export def vault-ca-pair [
   { cert: $cert, key: $key }
 }
 
-# Copy freshly issued leaves into a staging tree and merge them into a vault.
+# Copy freshly issued certificate material into a staging tree and merge it into a vault.
 #
 # The chain is omitted because CAs normally live in the vault as their own entries.
 export def vault-import-leaves [
@@ -143,6 +143,7 @@ export def vault-import-leaves [
   work: path # Work directory receiving the staging tree
   leaves: list # Records with `name`, `cert` and `key` fields
   --root-group: string = "PKI" # Root group pki2kdbx creates in the vault
+  --group-map: any = null # pki2kdbx group map for exact entry paths
 ] {
   if ($leaves | is-empty) {
     return
@@ -155,7 +156,7 @@ export def vault-import-leaves [
     cp $leaf.key ($staging | path join $"($leaf.name).key")
   }
 
-  vault-import-pki $credentials $staging --root-group $root_group --chain none
+  vault-import-pki $credentials $staging --root-group $root_group --group-map $group_map --chain none
 
   for leaf in $leaves {
     log info $"Added ($leaf.name) to the KeePassXC vault"

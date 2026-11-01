@@ -50,6 +50,43 @@ export def issue-leaf [
   { key: $key, csr: $csr, cert: $cert, chain: $chain }
 }
 
+# Issue an intermediate CA certificate from a signing CA.
+#
+# Returns the work-directory paths for the key, CSR and certificate.
+export def issue-ca [
+  --work-dir: path # Directory receiving the key, CSR, extension file and certificate
+  --name: string # Base file name for the generated files
+  --common-name: string # Subject common name
+  --ca-cert: path # Issuing CA certificate
+  --ca-key: path # Issuing CA private key
+  --serial: path # Issuing CA serial file
+  --days: int = 1825 # Certificate lifetime
+  --path-length: int = 0 # Maximum CA depth below this intermediate
+  --key-bits: int = 4096 # RSA key size
+  --key-usage: string = "critical,keyCertSign,cRLSign" # keyUsage extension value
+] {
+  let key = $work_dir | path join $"($name).key"
+  let csr = $work_dir | path join $"($name).csr"
+  let cert = $work_dir | path join $"($name).crt"
+  let ext = $work_dir | path join $"($name).ext"
+
+  let extensions = [
+    "[v3]"
+    $"basicConstraints=critical,CA:TRUE,pathlen:($path_length)"
+    $"keyUsage=($key_usage)"
+    "subjectKeyIdentifier=hash"
+    "authorityKeyIdentifier=keyid,issuer"
+  ]
+
+  $extensions | str join "\n" | save --force $ext
+
+  ^openssl genpkey -algorithm RSA -pkeyopt $"rsa_keygen_bits:($key_bits)" -out $key
+  ^openssl req -new -key $key -subj $"/CN=($common_name)" -out $csr
+  ^openssl x509 -req -in $csr -CA $ca_cert -CAkey $ca_key -CAserial $serial -CAcreateserial -days $days -sha256 -out $cert -extensions v3 -extfile $ext
+
+  { key: $key, csr: $csr, cert: $cert }
+}
+
 # Verify a leaf certificate against its issuing CA.
 export def verify-leaf [leaf: path, ca: path] {
   let result = ^openssl verify -CAfile $ca -partial_chain $leaf | complete

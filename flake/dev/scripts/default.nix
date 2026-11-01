@@ -86,6 +86,18 @@ in
     ];
   };
 
+  provision-intermediate-ca = writeNuApplicationWithLibs {
+    inherit pkgs;
+    sourceRoot = ./.;
+    name = "provision-intermediate-ca";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.keepassxc
+      pkgs.openssl
+      pki2kdbx
+    ];
+  };
+
   provision-db-guardian-certs = writeNuApplicationWithLibs {
     inherit pkgs;
     sourceRoot = ./.;

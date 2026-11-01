@@ -80,7 +80,20 @@ openssl req -x509 -new -key root.key -sha256 -days 3650 \
   -out root.crt
 ```
 
-Create a service intermediate:
+Create a service intermediate with the provisioning helper:
+
+```bash
+provision-intermediate-ca --vault pki.kdbx --vault-password-file vault-pass \
+  --prefix "<service>"
+```
+
+The helper appends ` Intermediate CA` to the prefix.
+It reads the root certificate and key from `root/Fleet mTLS Root CA`, issues a five-year intermediate
+with `pathlen:0` and `keyCertSign,cRLSign`, verifies it against the root,
+and merges it into the vault under `intermediate/<slug>/<common name>` with `cert.pem` and `key.pem` attachments.
+Use `--vault-group` for an explicit destination group, and `--days`, `--path-length`, or `--key-bits` to change the profile.
+
+Create a service intermediate manually with the equivalent steps:
 
 ```bash
 openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out <service>-intermediate.key

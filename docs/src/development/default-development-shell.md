@@ -45,7 +45,7 @@ and a client certificate for the database primary, reading the intermediate CA f
 provision-db-guardian-certs --vault pki.kdbx --vault-password-file vault-pass nixcloud
 ```
 
-It writes `hosts/server/<host>/db-guardian-tls/{CA_CERT,SERVER_CERT,SERVER_KEY}`, adds `CLIENT_CERT`
+The DB Guardian helper writes `hosts/server/<host>/db-guardian-tls/{CA_CERT,SERVER_CERT,SERVER_KEY}`, adds `CLIENT_CERT`
 and `CLIENT_KEY` for the primary, and encrypts every file with `sops`.
 Hosts and the primary default to the values derived from the flake.
 The coordinator certificate is issued by default; use `--skip-client` to omit it,
@@ -56,6 +56,22 @@ so the vault holds every certificate it issues.
 The merge backs the vault up to `<db>.bak-<timestamp>` first.
 The intermediate itself is read from `intermediate/<slug>/<common name>` using its `cert.pem`
 and `key.pem` attachments; override the entry, common name, or attachment names with the matching flags.
+
+`provision-intermediate-ca` issues a service intermediate signed by the Fleet root
+and stores it in a KeePassXC vault:
+
+```bash
+provision-intermediate-ca --vault pki.kdbx --vault-password-file vault-pass \
+  --prefix "Backup"
+```
+
+The helper appends ` Intermediate CA` to the prefix, so this example issues `Backup Intermediate CA`.
+It reads the root certificate and key from `root/Fleet mTLS Root CA`, issues a five-year intermediate
+with `pathlen:0` and `keyCertSign,cRLSign`, verifies it against the root,
+and merges it through `pki2kdbx` with `cert.pem` and `key.pem` attachments.
+Override the root entry, root common name, or attachment names with the matching flags.
+Use `--vault-group` to choose the destination group; otherwise `pki2kdbx` derives it from the common name.
+`--days`, `--path-length`, and `--key-bits` control the certificate profile, and `--dry-run` prints the plan.
 
 ## Generated `.luarc.json`
 
