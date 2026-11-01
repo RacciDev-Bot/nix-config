@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Provide a single `core.defaultGroups` list that other core modules and hosts use to grant access to subsystems like audio, networking, Docker, printing, and virtualisation, appended to every configured standard user.
+Provide a single `core.defaultGroups` list that other core modules
+and hosts use to grant access to subsystems like audio, networking, Docker, printing, and virtualisation, appended to every configured standard user.
 
 ## Entry Point
 
@@ -20,5 +21,6 @@ This appends shared groups after any user-specific group configuration instead o
 
 ## Operational Notes / Assumptions
 
-- Module has no enable flag. It activates whenever `core.defaultGroups` contains values.
+- Module has no enable flag.
+  It activates whenever `core.defaultGroups` contains values.
 - Group assignment applies to every user passed through module argument `users`.

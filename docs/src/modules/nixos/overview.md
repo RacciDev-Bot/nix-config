@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This section covers all NixOS modules provided by this flake, including core baseline configuration, server orchestration, custom services, and AI infrastructure.
+This section covers all NixOS modules provided by this flake, including core baseline configuration,
+server orchestration, custom services, and AI infrastructure.
 
 ## Entry Point
 

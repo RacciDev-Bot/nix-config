@@ -35,10 +35,14 @@ It handles all external traffic routing, VPN tunnelling, DNS filtering, and dash
 
 ## Operational Notes / Assumptions
 
-- This host is expected to have stable upstream network access plus reachability to the cluster LAN and tailnet, because ingress, DNS, and tunnel traffic all terminate here.
-- Caddy terminates public TLS for cluster services, while some backends also use separate internal TLS or mTLS; certificate trust and backend server names must stay aligned with those upstream services.
-- Reverse-proxied services remain individually responsible for their own authn/authz. Publishing a route here does not replace service-level access controls.
-- MinIO is built from the `nixpkgs-minio` input pinned to a revision from before nixpkgs removed the package and module. The service definition lives in `hosts/server/nixio/storage.nix` and should be dropped once storage moves to SeaweedFS.
+- This host is expected to have stable upstream network access plus reachability to the cluster LAN and tailnet,
+  because ingress, DNS, and tunnel traffic all terminate here.
+- Caddy terminates public TLS for cluster services, while some backends also use separate internal TLS or mTLS;
+  certificate trust and backend server names must stay aligned with those upstream services.
+- Reverse-proxied services remain individually responsible for their own authn/authz.
+  Publishing a route here does not replace service-level access controls.
+- MinIO is built from the `nixpkgs-minio` input pinned to a revision from before nixpkgs removed the package and module.
+  The service definition lives in `hosts/server/nixio/storage.nix` and should be dropped once storage moves to SeaweedFS.
 
 ## References
 

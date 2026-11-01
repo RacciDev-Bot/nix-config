@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Expose the host remotely through two independent sub-features: Remote Desktop (xrdp) for full desktop access over RDP, and Streaming (Sunshine) for low-latency game or desktop streaming.
+Expose the host remotely through two independent sub-features: Remote Desktop (xrdp) for full desktop access over RDP,
+and Streaming (Sunshine) for low-latency game or desktop streaming.
 
 ## Entry Point
 
@@ -23,7 +24,8 @@ When `core.remote.enable = true`:
 
 - `remoteDesktop.enable` turns on `services.xrdp`, sets `defaultWindowManager`, and opens firewall for RDP.
 - `streaming.enable` turns on `services.sunshine`, opens firewall for TCP 47989, and sets `capSysAdmin = true`.
-- Sunshine does not run continuously. A **socket-activated TCP proxy** on port 47989 starts Sunshine on-demand when a client connects.
+- Sunshine does not run continuously.
+  A **socket-activated TCP proxy** on port 47989 starts Sunshine on-demand when a client connects.
 - When the client disconnects and no new connection arrives for 5 minutes, the proxy exits and Sunshine stops.
 - if Home Manager is present, streaming also persists `.config/sunshine` through shared Home Manager module.
 
@@ -42,19 +44,22 @@ If Home Manager Hyprland is in Lua mode (`wayland.windowManager.hyprland.configT
 
 - **Startup hook**: `settings.on` with `hyprland.start` event triggers `hyprctl output create headless`.
 - **Monitor rule**: `{ output = "HEADLESS-1"; disabled = true; }`
-- **Screencopy permission**: routed through `wayland.windowManager.hyprland.custom-settings.permission.screenCopy`, which handles both Lua and `hyprlang` modes automatically.
+- **Screencopy permission**: routed through `wayland.windowManager.hyprland.custom-settings.permission.screenCopy`,
+  which handles both Lua and `hyprlang` modes automatically.
 
 | Application           | Behaviour                                                                                                                                                                               |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Shared Desktop**    | Enables `HEADLESS-1` at client resolution and leaves physical monitors active.                                                                                                          |
 | **Exclusive Desktop** | Enables `HEADLESS-1`, saves active physical monitor state to `$XDG_STATE_HOME/hyprland-disabled-monitors-pre-sunshine.json`, disables those monitors, then restores them on disconnect. |
 
-The socket proxy and Hyprland monitor helpers are shipped together in the shared `sunshine-tools` package so Sunshine startup and prep/undo hooks reuse one tested implementation across hosts.
+The socket proxy and Hyprland monitor helpers are shipped together in the shared `sunshine-tools` package
+so Sunshine startup and prep/undo hooks reuse one tested implementation across hosts.
 
 ### On-Demand Activation & Idle Stop
 
 Sunshine stays on its standard port family rooted at **TCP/UDP 47989–47990+** (no port-family offset).
-External inbound TCP **47989** is firewall-redirected to internal proxy port **48989**. The proxy wakes Sunshine and forwards to `127.0.0.1:47989`.
+External inbound TCP **47989** is firewall-redirected to internal proxy port **48989**.
+The proxy wakes Sunshine and forwards to `127.0.0.1:47989`.
 
 | Stage                 | What happens                                                                                                                                                                                                                                                                       |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -86,18 +91,33 @@ sunshine-proxy.socket
 sunshine-proxy.service → sunshine.service (:47989)
 ```
 
-Redirect covers only inbound network traffic. Locally-originated traffic to `:47989` (e.g. from Moonlight running on the same machine) is unaffected.
+Redirect covers only inbound network traffic.
+Locally-originated traffic to `:47989` (e.g. from Moonlight running on the same machine) is unaffected.
 
 ## Operational Notes / Assumptions
 
-- Two sub-features are independent. You can enable streaming without RDP, or RDP without streaming.
+- Two sub-features are independent.
+  You can enable streaming without RDP, or RDP without streaming.
 - Sunshine persistence and Hyprland settings are only added when Home Manager is present in system configuration.
 - Hyprland-specific Sunshine application entries are only added when both streaming and Hyprland are enabled.
 
 ### Caveats
 
-- **No LAN discovery while idle.** Sunshine needs to run for mDNS/SSDP advertisements to appear on LAN. While stopped (idle), clients will not auto-discover the host. Users must add the host manually by IP/hostname in Moonlight or use a previously-added host entry (Moonlight remembers known hosts).
-- **TCP wake only.** This proxy covers the control/initial TCP connection on 47989. Sunshine's UDP audio/video streams (standard port range) will only work after Sunshine runs. Since Sunshine sets up its UDP sockets itself after startup, no UDP wake is needed in practice (the rendezvous happens over TCP first).
-- **Delayed first connect.** The first TCP connection may stall ~1–2 seconds while Sunshine starts up. Clients (Moonlight) retry or timeout gracefully.
-- **Firewall.** Sunshine opens its standard ports via `openFirewall`. The redirect only touches TCP 47989 for the wake path. No port-family offset anymore — all media/data ports remain at standard values.
-- **Redirect scope.** The firewall redirect applies to inbound network traffic only. Local loopback connections to `:47989` bypass the redirect and reach Sunshine directly if it is already running.
+- **No LAN discovery while idle.**
+  Sunshine needs to run for mDNS/SSDP advertisements to appear on LAN.
+  While stopped (idle), clients will not auto-discover the host.
+  Users must add the host manually by IP/hostname in Moonlight or use a previously-added host entry (Moonlight remembers known hosts).
+- **TCP wake only.**
+  This proxy covers the control/initial TCP connection on 47989.
+  Sunshine's UDP audio/video streams (standard port range) will only work after Sunshine runs.
+  Since Sunshine sets up its UDP sockets itself after startup, no UDP wake is needed in practice (the rendezvous happens over TCP first).
+- **Delayed first connect.**
+  The first TCP connection may stall ~1–2 seconds while Sunshine starts up.
+  Clients (Moonlight) retry or timeout gracefully.
+- **Firewall.**
+  Sunshine opens its standard ports via `openFirewall`.
+  The redirect only touches TCP 47989 for the wake path.
+  No port-family offset anymore — all media/data ports remain at standard values.
+- **Redirect scope.**
+  The firewall redirect applies to inbound network traffic only.
+  Local loopback connections to `:47989` bypass the redirect and reach Sunshine directly if it is already running.

@@ -19,30 +19,43 @@ nix develop --override-input devenv-root file+file://<path-to-nix-config>/.deven
 ## Helper Commands
 
 The shell also exposes repository helper commands from `flake/dev/scripts/`.
-`rebuild-target` accepts `action host`, or just `host`; when the action is omitted it defaults to `switch`. Extra args are forwarded to `nh` / `nix` after `--accept-flake-config`, and args that start with `--` must be separated with a literal `--`:
+`rebuild-target` accepts `action host`, or just `host`; when the action is omitted it defaults to `switch`.
+Extra args are forwarded to `nh` / `nix` after `--accept-flake-config`, and args that start with `--` must be separated with a literal `--`:
 
 ```bash
 rebuild-target build nixmi -- --fallback
 rebuild-target switch nixmi
 ```
 
-`pki2kdbx` builds a KeePassXC vault from a directory of PEM certificates and keys. It bundles `cryptography` for parsing and `keepassxc-cli` for writing the database:
+`pki2kdbx` builds a KeePassXC vault from a directory of PEM certificates and keys.
+It bundles `cryptography` for parsing and `keepassxc-cli` for writing the database:
 
 ```bash
 pki2kdbx --src ./pem-tree --db pki.kdbx --native-prompt
 ```
 
-When `--db` already exists, the command copies it to `<db>.bak-<timestamp>` before merging. The staging vault uses an ephemeral key file, so only the real vault's password is requested. Pass `--password-file` to read the vault password from a file instead of prompting.
+When `--db` already exists, the command copies it to `<db>.bak-<timestamp>` before merging.
+The staging vault uses an ephemeral key file, so only the real vault's password is requested.
+Pass `--password-file` to read the vault password from a file instead of prompting.
 
-`provision-db-guardian-certs` issues DB Guardian server certificates for guardian hosts and a client certificate for the database primary, reading the intermediate CA from a KeePassXC vault:
+`provision-db-guardian-certs` issues DB Guardian server certificates for guardian hosts
+and a client certificate for the database primary, reading the intermediate CA from a KeePassXC vault:
 
 ```bash
 provision-db-guardian-certs --vault pki.kdbx --vault-password-file vault-pass nixcloud
 ```
 
-It writes `hosts/server/<host>/db-guardian-tls/{CA_CERT,SERVER_CERT,SERVER_KEY}`, adds `CLIENT_CERT` and `CLIENT_KEY` for the primary, and encrypts every file with `sops`. Hosts and the primary default to the values derived from the flake. The coordinator certificate is issued by default; use `--skip-client` to omit it, `--include-client` to state that explicitly, `--force` to rotate files that already exist, and `--dry-run` to print the plan.
+It writes `hosts/server/<host>/db-guardian-tls/{CA_CERT,SERVER_CERT,SERVER_KEY}`, adds `CLIENT_CERT`
+and `CLIENT_KEY` for the primary, and encrypts every file with `sops`.
+Hosts and the primary default to the values derived from the flake.
+The coordinator certificate is issued by default; use `--skip-client` to omit it,
+`--include-client` to state that explicitly, `--force` to rotate files that already exist, and `--dry-run` to print the plan.
 
-Newly issued leaves are merged into the same KeePassXC vault under `leafs/<intermediate-slug>` through `pki2kdbx`, so the vault holds every certificate it issues. The merge backs the vault up to `<db>.bak-<timestamp>` first. The intermediate itself is read from `intermediate/<slug>/<common name>` using its `cert.pem` and `key.pem` attachments; override the entry, common name, or attachment names with the matching flags.
+Newly issued leaves are merged into the same KeePassXC vault under `leafs/<intermediate-slug>` through `pki2kdbx`,
+so the vault holds every certificate it issues.
+The merge backs the vault up to `<db>.bak-<timestamp>` first.
+The intermediate itself is read from `intermediate/<slug>/<common name>` using its `cert.pem`
+and `key.pem` attachments; override the entry, common name, or attachment names with the matching flags.
 
 ## Generated `.luarc.json`
 

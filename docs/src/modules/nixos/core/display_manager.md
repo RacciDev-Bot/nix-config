@@ -16,7 +16,8 @@ Provide a consistent, terminal-based login experience via greetd and tuigreet on
 
 ## Architecture / Services / Scope
 
-Enabled by default on hosts where `host.device.isHeadless = false`. The greetd greeter runs as the `greeter` user and:
+Enabled by default on hosts where `host.device.isHeadless = false`.
+The greetd greeter runs as the `greeter` user and:
 
 - shows the current time,
 - remembers the last logged-in user and last selected session, and
@@ -26,4 +27,5 @@ Greeter cache is persisted to `/var/cache/tuigreet` through `host.persistence.di
 
 ## Operational Notes / Assumptions
 
-- Both Wayland (`wayland-sessions`) and X11 (`xsessions`) session paths are built dynamically from installed session packages, so adding a new session package is enough to make it appear in the greeter.
+- Both Wayland (`wayland-sessions`) and X11 (`xsessions`) session paths are built dynamically from installed session
+  packages, so adding a new session package is enough to make it appear in the greeter.

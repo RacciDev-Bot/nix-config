@@ -2,7 +2,8 @@
 
 ## Purpose
 
-The DB Guardian system ensures that services across the infrastructure are aware of the availability of centralised databases hosted on the Database Coordinator.
+The DB Guardian system ensures that services across the infrastructure are aware of the availability of centralised
+databases hosted on the Database Coordinator.
 It provides graceful startup and shutdown coordination between the database host and dependent services on other servers.
 
 ## Entry Point
@@ -67,11 +68,15 @@ The command is idempotent, so clients that are already undrained are unaffected.
 
 This covers failures that happen after the initial undrain succeeded:
 
-- A client boots while the databases are down, so its readiness check times out and its target fails. When the databases return, the next reconciliation starts the target again.
-- A client's readiness check is restarted and fails, stopping the target. The next reconciliation starts it again.
+- A client boots while the databases are down, so its readiness check times out and its target fails.
+  When the databases return, the next reconciliation starts the target again.
+- A client's readiness check is restarted and fails, stopping the target.
+  The next reconciliation starts it again.
 - A client's target is stopped for any other reason while the coordinator is active.
 
-The timer is started and stopped with the coordinator. An intentional drain stops the coordinator, which stops the timer, so reconciliation cannot undo the drain. If a reconciliation run fails, the timer retries at the next interval.
+The timer is started and stopped with the coordinator.
+An intentional drain stops the coordinator, which stops the timer, so reconciliation cannot undo the drain.
+If a reconciliation run fails, the timer retries at the next interval.
 
 ### Systemd Units
 
@@ -142,9 +147,11 @@ All WebSocket connections must authenticate with this key before commands are ac
 
 ### Configuration
 
-**Port**: The guardian WebSocket server listens on port **9876** by default. This port is automatically opened to local subnets on servers with database dependencies.
+**Port**: The guardian WebSocket server listens on port **9876** by default.
+This port is automatically opened to local subnets on servers with database dependencies.
 
-**Dependent Services**: Dependent Services will be automatically populated with service names where there is a `systemd.service.<name>` defined from the names in `server.database.postgres` or `server.database.redis`.
+**Dependent Services**: Dependent Services will be automatically populated with service names where
+there is a `systemd.service.<name>` defined from the names in `server.database.postgres` or `server.database.redis`.
 To manually add a service bind to the database availability target, add it to the `server.database.dependentServices` option.
 Services listed here will start only when `db-databases.target` is active, stop when it stops, and restart when the target restarts.
 
@@ -198,7 +205,8 @@ systemctl stop db-databases.target
 - Check for repeated undrain attempts: `journalctl -u db-database-coordinator.service`
 - Check the reconciliation timer: `systemctl status db-database-coordinator-reconcile.timer`
 - Check reconciliation runs: `journalctl -u db-database-coordinator-reconcile.service`
-- The coordinator is restarted by `postgresql.service` and `redis.service`, retries failed undrains every 30 seconds, and re-asserts undrain every 5 minutes while active
+- The coordinator is restarted by `postgresql.service` and `redis.service`, retries failed undrains every 30 seconds,
+  and re-asserts undrain every 5 minutes while active
 
 **Authentication failures in logs:**
 

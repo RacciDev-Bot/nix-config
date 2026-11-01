@@ -2,7 +2,8 @@
 
 ## Purpose
 
-The distributed builds module allows for distributed building of Nix derivations using remote build machines, providing a coordinator host and several build machines to distribute the build load across the server cluster.
+The distributed builds module allows for distributed building of Nix derivations using remote build machines,
+providing a coordinator host and several build machines to distribute the build load across the server cluster.
 
 ## Entry Point
 
@@ -15,7 +16,8 @@ The distributed builds module allows for distributed building of Nix derivations
 ## Architecture / Services / Scope
 
 - This module coordinates the creation of a system user (`builder`) on the build server and adds the necessary SSH keys to allow other hosts to connect.
-- On the hosts using the build server, the module automatically configures `nix.distributedBuilds`, sets up the build machines using `nix.buildMachines`, and points outbound SSH authentication at `core.openssh.hostPrivateKeyPath`.
+- On the hosts using the build server, the module automatically configures `nix.distributedBuilds`,
+  sets up the build machines using `nix.buildMachines`, and points outbound SSH authentication at `core.openssh.hostPrivateKeyPath`.
 - The `builder` user is automatically added to `nix.settings.trusted-users` on the build server.
 - The module uses `self.nixosConfigurations` to dynamically discover the system architecture of the build machines.
 

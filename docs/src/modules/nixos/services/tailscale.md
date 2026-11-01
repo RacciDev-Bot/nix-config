@@ -14,7 +14,8 @@ Extensions to the standard NixOS Tailscale module, providing easier tag manageme
 
 ## Architecture / Services / Scope
 
-This module extends the standard NixOS `services.tailscale` module by automatically constructing the `--advertise-tags` flag from the configured `services.tailscale.tags` list.
+This module extends the standard NixOS `services.tailscale` module by automatically constructing the `--advertise-tags`
+flag from the configured `services.tailscale.tags` list.
 
 ## Operational Notes / Assumptions
 

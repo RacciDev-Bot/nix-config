@@ -2,7 +2,8 @@
 
 ## Purpose
 
-`list-ephemeral` is a shell utility that helps discover ephemeral paths and generate Nix snippets for persistence. It integrates with Home-Manager to supply defaults, persisted paths, and program context.
+`list-ephemeral` is a shell utility that helps discover ephemeral paths and generate Nix snippets for persistence.
+It integrates with Home-Manager to supply defaults, persisted paths, and program context.
 
 ## Entry Point
 
@@ -43,7 +44,8 @@ list-ephemeral
 | `Ctrl-C` | Quit (standard fzf behaviour)             |
 | `Enter`  | Confirm selection                         |
 
-**Note:** In browse mode (default), typing text will appear in the prompt but won't filter results. Press `/` to enable search filtering.
+**Note:** In browse mode (default), typing text will appear in the prompt but won't filter results.
+Press `/` to enable search filtering.
 
 List mode:
 

@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Provide a shared baseline for SOPS-managed secrets on every host: point sops-nix at the host's secrets file and teach age to use the host's provisioned SSH keys.
+Provide a shared baseline for SOPS-managed secrets on every host: point sops-nix at the host's secrets file
+and teach age to use the host's provisioned SSH keys.
 
 ## Entry Point
 
@@ -14,7 +15,8 @@ When enabled, module:
 
 - imports `sops-nix` (skipped when function argument `importExternals = false`),
 - sets `sops.defaultSopsFile` to `core.sops.hostSecretsFile`,
-- builds `sops.age.sshKeyPaths` from `core.openssh.hostPrivateKeyPath` first, then appends configured ed25519 OpenSSH host keys without duplicating the canonical path.
+- builds `sops.age.sshKeyPaths` from `core.openssh.hostPrivateKeyPath` first,
+  then appends configured ed25519 OpenSSH host keys without duplicating the canonical path.
 
 ## Operational Notes / Assumptions
 

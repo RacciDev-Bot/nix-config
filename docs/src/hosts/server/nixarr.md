@@ -13,7 +13,8 @@ All downloading happens through a VPN tunnel so P2P traffic is isolated.
 
 ### Playback
 
-- **Jellyfin**: Media server with hardware-accelerated transcoding (VA-API via `/dev/dri/renderD128`), hardware encoding for HEVC and hardware decoding for AV1/H.264/HEVC/VP9.
+- **Jellyfin**: Media server with hardware-accelerated transcoding (VA-API via `/dev/dri/renderD128`),
+  hardware encoding for HEVC and hardware decoding for AV1/H.264/HEVC/VP9.
 
 ### Media Management ("arr" stack)
 
@@ -31,9 +32,11 @@ All downloading happens through a VPN tunnel so P2P traffic is isolated.
 
 ### Networking / VPN
 
-- All downloading apps run inside a WireGuard VPN namespace (`vpnNamespaces.wg`) so P2P/usenet traffic egresses through the VPN rather than the host's normal connection.
+- All downloading apps run inside a WireGuard VPN namespace (`vpnNamespaces.wg`)
+  so P2P/usenet traffic egresses through the VPN rather than the host's normal connection.
 - The VPN config is provided as a sops binary secret (`wg.conf`) that restarts `wg.service` when rotated.
-- Access to VPN-isolated apps is allowed from the LAN and the configured tailnet; see the [Tailscale module documentation](../../modules/nixos/services/tailscale.md) for the cluster's tailnet integration.
+- Access to VPN-isolated apps is allowed from the LAN and the configured tailnet;
+  see the [Tailscale module documentation](../../modules/nixos/services/tailscale.md) for the cluster's tailnet integration.
 
 ### Authentication
 
@@ -49,7 +52,8 @@ All downloading happens through a VPN tunnel so P2P traffic is isolated.
 
 ## Operational Notes / Assumptions
 
-- VPN download services restart on failure and wait for `wg.service` to come up before starting, so they don't fail during early boot when networking isn't ready.
+- VPN download services restart on failure and wait for `wg.service` to come up before starting,
+  so they don't fail during early boot when networking isn't ready.
 - Hardware transcoding relies on the host exposing a working `/dev/dri` device.
 - Media apps are exposed through the IO Coordinator reverse proxy.
 

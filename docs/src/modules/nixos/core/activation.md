@@ -4,7 +4,8 @@ Reports system generation changes during NixOS activation.
 
 ## Purpose
 
-Provide visibility into what changed between system generations by comparing the previous and newest generation during NixOS activation, so each upgrade shows a readable package and closure diff.
+Provide visibility into what changed between system generations by comparing the previous
+and newest generation during NixOS activation, so each upgrade shows a readable package and closure diff.
 
 ## Entry Point
 

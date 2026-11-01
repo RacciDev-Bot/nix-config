@@ -18,15 +18,20 @@ The `lib` directory contains custom Nix functions and builders used throughout t
   - `package.nix`: Custom package definitions and derivation helpers.
   - `persistence.nix`: Helpers for managing path persistence in ephemeral (TempFS) environments.
   - `strings.nix`: String manipulation and formatting utilities.
-- `lib/builders/`: Specialised builders for system and home configurations. Builders forward shared module arguments (e.g. `importExternals` and repo-level args) into both NixOS and nested Home Manager `extraSpecialArgs`, enabling modules that conditionally import external inputs.
+- `lib/builders/`: Specialised builders for system and home configurations.
+  Builders forward shared module arguments (e.g. `importExternals` and repo-level args) into both NixOS
+  and nested Home Manager `extraSpecialArgs`, enabling modules that conditionally import external inputs.
 
 ## Operational Notes / Assumptions
 
 ### Key Options/Knobs
 
-The functions in `lib` take various arguments depending on their purpose. Builders typically take parameters for hostnames, user names, and modules.
+The functions in `lib` take various arguments depending on their purpose.
+Builders typically take parameters for hostnames, user names, and modules.
 
-`lib/builders/default.nix` owns the single nixpkgs import used by every system, home, and package set. Its `config` sets `allowUnfree`, `permittedInsecurePackages`, CUDA/ROCm support, and the `problems.handlers` entries that downgrade known-broken packages (currently `fastmcp-slim`) from an evaluation error to a warning.
+`lib/builders/default.nix` owns the single nixpkgs import used by every system, home, and package set.
+Its `config` sets `allowUnfree`, `permittedInsecurePackages`, CUDA/ROCm support,
+and the `problems.handlers` entries that downgrade known-broken packages (currently `fastmcp-slim`) from an evaluation error to a warning.
 
 ### Common Workflows
 

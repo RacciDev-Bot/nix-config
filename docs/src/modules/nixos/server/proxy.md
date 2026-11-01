@@ -2,7 +2,12 @@
 
 ## Purpose
 
-The Proxy submodule provides a unified interface for exposing internal services through Caddy. It handles virtual host configuration, automatic SSL via ACME, OAuth2 authentication with Kanidm, static API key authentication, and public exposure through Cloudflared tunnels. It abstracts the complexity of reverse proxying by allowing services to define their proxy requirements within their own module configuration, automatically coordinating between backend hosts and the primary IO host to ensure ports are open and traffic is correctly routed.
+The Proxy submodule provides a unified interface for exposing internal services through Caddy.
+It handles virtual host configuration, automatic SSL via ACME, OAuth2 authentication with Kanidm,
+static API key authentication, and public exposure through Cloudflared tunnels.
+It abstracts the complexity of reverse proxying by allowing services to define their proxy requirements within
+their own module configuration, automatically coordinating between backend hosts
+and the primary IO host to ensure ports are open and traffic is correctly routed.
 
 ## Entry Point
 
@@ -23,17 +28,20 @@ The Proxy submodule provides a unified interface for exposing internal services 
 
 - **`default.nix`** — Logic and helpers: resolving OAuth contexts and mapping local addresses to backend hostnames.
 - **`options.nix`** — Option definitions for virtual hosts and shared contexts.
-- **`config.nix`** — Caddy integration: generation of `services.caddy.virtualHosts` and ACME certificate requests. L4 (TCP/UDP) forwarding is handled by the `l4` extension, not by `config.nix`.
+- **`config.nix`** — Caddy integration: generation of `services.caddy.virtualHosts` and ACME certificate requests.
+  L4 (TCP/UDP) forwarding is handled by the `l4` extension, not by `config.nix`.
 - **`kanidm.nix`** — Authentication security: generates the Caddy `security` block, including identity providers, portals, and authorisation policies.
 - **`extensions.nix`** — System integration: connects the proxy to the dashboard, Cloudflared tunnels, and automates Kanidm client provisioning.
 
 ### Extension System
 
-The proxy module supports a registry-based extension system. Extensions are self-contained modules that inject Caddy directives into virtual host configurations — without modifying proxy internals.
+The proxy module supports a registry-based extension system.
+Extensions are self-contained modules that inject Caddy directives into virtual host configurations — without modifying proxy internals.
 
 #### Extension Registry
 
-Extensions register themselves via `server.proxy.extensions.<name>`, an attribute set of submodules. Each extension has:
+Extensions register themselves via `server.proxy.extensions.<name>`, an attribute set of submodules.
+Each extension has:
 
 | Field                 | Type                                             | Default  | Description                                                                                                               |
 | --------------------- | ------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -46,7 +54,8 @@ Extensions register themselves via `server.proxy.extensions.<name>`, an attribut
 
 #### Per-Vhost Extension Selection
 
-Each vhost has `server.proxy.virtualHosts.<name>.extensions` (default `null` = all enabled extensions). Set to a list of extension names for selective enablement, or `[]` to disable all extensions.
+Each vhost has `server.proxy.virtualHosts.<name>.extensions` (default `null` = all enabled extensions).
+Set to a list of extension names for selective enablement, or `[]` to disable all extensions.
 
 #### Config Function Signature
 
@@ -66,7 +75,8 @@ Arguments:
 globalConfig :: hostConfig -> string
 ```
 
-Called once per enabled extension on the IO primary host. Output concatenated into `services.caddy.globalConfig`, sorted by extension priority.
+Called once per enabled extension on the IO primary host.
+Output concatenated into `services.caddy.globalConfig`, sorted by extension priority.
 
 #### Auto-Enable Pattern
 
@@ -74,7 +84,9 @@ Extensions auto-detect whether they have work to do using `mkDefault`; users can
 
 #### Priority Ordering
 
-Extensions sort by priority ascending. Equal priorities break alphabetically by extension name. Extensions with lower priority numbers generate config earlier.
+Extensions sort by priority ascending.
+Equal priorities break alphabetically by extension name.
+Extensions with lower priority numbers generate config earlier.
 
 #### Authoring a New Extension
 
@@ -86,7 +98,10 @@ Extensions sort by priority ascending. Equal priorities break alphabetically by 
 
 ### API Key Auth Extension
 
-The `api-key-auth` extension provides static API key authentication for virtual hosts. When enabled, requests must include a valid `Req-API-Key` header matching a securely generated secret. Bypass paths are supported per vhost. Mutual exclusivity with Kanidm on the same vhost is enforced by the existing `consumesExtraConfig` assertion.
+The `api-key-auth` extension provides static API key authentication for virtual hosts.
+When enabled, requests must include a valid `Req-API-Key` header matching a securely generated secret.
+Bypass paths are supported per vhost.
+Mutual exclusivity with Kanidm on the same vhost is enforced by the existing `consumesExtraConfig` assertion.
 
 ### Migrated Extensions
 
@@ -116,9 +131,12 @@ Secrets are auto-generated via sops at `PROXY_AUTH/<VHOST_NAME>_API_KEY`, inject
 
 ## Operational Notes / Assumptions
 
-- **Caddy Integration**: The module assumes the existence of a `default` Caddy snippet for common headers and security settings. When `public` is enabled, it also expects a `public` snippet.
-- **Dashboard Integration**: Services defined in `server.proxy.virtualHosts` are automatically added to the server dashboard with default titles and icons derived from the host name.
-- **Layer 4 Forwarding**: L4 forwarding uses the `caddy.layer4` plugin for non-HTTP traffic like database connections or SSH. Managed by the `l4` extension (`modules/nixos/server/proxy/extensions/l4.nix`), which auto-enables when any vhost has `l4 != null`.
+- **Caddy Integration**: The module assumes the existence of a `default` Caddy snippet for common headers and security settings.
+  When `public` is enabled, it also expects a `public` snippet.
+- **Dashboard Integration**: Services defined in `server.proxy.virtualHosts` are automatically added to the server
+  dashboard with default titles and icons derived from the host name.
+- **Layer 4 Forwarding**: L4 forwarding uses the `caddy.layer4` plugin for non-HTTP traffic like database connections or SSH.
+  Managed by the `l4` extension (`modules/nixos/server/proxy/extensions/l4.nix`), which auto-enables when any vhost has `l4 != null`.
 
 ## References
 

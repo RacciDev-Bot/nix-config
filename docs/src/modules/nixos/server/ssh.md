@@ -2,7 +2,9 @@
 
 ## Purpose
 
-The SSH submodule enhances administrative access by providing a session-only environment tailored for server management. It automatically transitions interactive root SSH sessions into a dedicated development shell, ensuring consistent tooling and a powerful shell experience across server environments, and removes the need for manual setup of common tools and aliases.
+The SSH submodule enhances administrative access by providing a session-only environment tailored for server management.
+It automatically transitions interactive root SSH sessions into a dedicated development shell,
+ensuring consistent tooling and a powerful shell experience across server environments, and removes the need for manual setup of common tools and aliases.
 
 ## Entry Point
 
@@ -19,8 +21,11 @@ The module consists of two parts:
 
 ### Auto-entry Logic (`ssh-shell/default.nix`)
 
-- Creates an indirect GC root for the SSH shell at login time by instantiating the shell expression to a derivation, then realising it with `nix-store --add-root --indirect --realise`. This keeps the realised shell alive across upgrades without referencing `config.system.build.toplevel` during system evaluation.
-- Modifies `/etc/bashrc` to detect interactive root logins via SSH. It evaluates several conditions before launching the session shell:
+- Creates an indirect GC root for the SSH shell at login time by instantiating the shell expression to a derivation,
+  then realising it with `nix-store --add-root --indirect --realise`.
+  This keeps the realised shell alive across upgrades without referencing `config.system.build.toplevel` during system evaluation.
+- Modifies `/etc/bashrc` to detect interactive root logins via SSH.
+  It evaluates several conditions before launching the session shell:
   - User must be root (`EUID=0`).
   - Session must be via SSH (`SSH_CONNECTION` present).
   - Session must be interactive (`stdin` is a TTY).
@@ -50,7 +55,10 @@ This is particularly useful for automated scripts or troubleshooting scenarios w
 
 ### Guard Mechanism
 
-The auto-entry script uses the `SSH_NIX_SHELL` environment variable to prevent recursive shell entries. It runs `nix-shell --add-root --indirect` to build and enter the environment in a single call (pinning a GC root under `/nix/var/nix/gcroots/per-user/root/ssh-shell-result`), which triggers the `shellHook` and exec's Fish. If that fails, the system falls back to the default shell, clears the guard, and prints a message to stderr.
+The auto-entry script uses the `SSH_NIX_SHELL` environment variable to prevent recursive shell entries.
+It runs `nix-shell --add-root --indirect` to build and enter the environment in a single call (pinning a GC root
+under `/nix/var/nix/gcroots/per-user/root/ssh-shell-result`), which triggers the `shellHook` and exec's Fish.
+If that fails, the system falls back to the default shell, clears the guard, and prints a message to stderr.
 
 ## References
 

@@ -14,8 +14,10 @@ The module is provider-oriented: `default.nix` holds universal defaults, while e
 
 ### File layout
 
-- `default.nix` — entry point. Declares only universal options shared by every agent backend: `enable` and `models`.
-- `hermes/default.nix` — import aggregator. Declares the local `services.ai-agent.settings` option, which deep-merges and is emitted once as `services.hermes-agent.settings`.
+- `default.nix` — entry point.
+  Declares only universal options shared by every agent backend: `enable` and `models`.
+- `hermes/default.nix` — import aggregator.
+  Declares the local `services.ai-agent.settings` option, which deep-merges and is emitted once as `services.hermes-agent.settings`.
 - `hermes/lib.nix` — shared helpers.
 - `hermes/core.nix` — the agent container plus universal agent settings (models wiring, auxiliary models, display, security, approvals, …).
 - `hermes/dashboard.nix` — web dashboard unit and OIDC authentication.
@@ -34,14 +36,20 @@ The module is provider-oriented: `default.nix` holds universal defaults, while e
 
 The module enables `services.hermes-agent` and adds optional components on top:
 
-- **Dashboard** — a separate `hermes-dashboard` systemd service runs `docker exec` into the `hermes-agent` container to serve the dashboard under the `hermes` user.
-- **Voice & STT** — optional voice input and output. With `services.ai-agent.voice.wyoming-stt.enable`, Hermes reuses an existing Wyoming faster-whisper server instead of running a separate Whisper instance: `HERMES_LOCAL_STT_COMMAND` is set to invoke `wyoming-transcribe`, which sends audio over the Wyoming protocol and returns the transcript.
+- **Dashboard** — a separate `hermes-dashboard` systemd service runs `docker exec` into the `hermes-agent` container
+  to serve the dashboard under the `hermes` user.
+- **Voice & STT** — optional voice input and output.
+  With `services.ai-agent.voice.wyoming-stt.enable`, Hermes reuses an existing Wyoming faster-whisper server instead
+  of running a separate Whisper instance: `HERMES_LOCAL_STT_COMMAND` is set to invoke `wyoming-transcribe`,
+  which sends audio over the Wyoming protocol and returns the transcript.
 - **OIDC Authentication** — optional OpenID Connect authentication for the dashboard using a **public PKCE client**.
-- **Memory (Mnemosyne)** — with `services.ai-agent.memory.enable`, the memory provider switches to **Mnemosyne**, a local SQLite-backed memory system with semantic recall.
+- **Memory (Mnemosyne)** — with `services.ai-agent.memory.enable`, the memory provider switches to **Mnemosyne**,
+  a local SQLite-backed memory system with semantic recall.
 
 ## Secrets
 
-Hermes requires API keys via environment files. Configure via sops-nix:
+Hermes requires API keys via environment files.
+Configure via sops-nix:
 
 ```nix
 sops = {

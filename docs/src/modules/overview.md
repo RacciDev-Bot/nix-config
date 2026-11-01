@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This section provides an overview of the custom NixOS and Home-Manager modules defined in this repository. These modules allow for modular and reusable configurations across different hosts and users.
+This section provides an overview of the custom NixOS and Home-Manager modules defined in this repository.
+These modules allow for modular and reusable configurations across different hosts and users.
 
 ## Architecture / Services / Scope
 

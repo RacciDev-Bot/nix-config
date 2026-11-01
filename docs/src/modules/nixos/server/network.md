@@ -2,7 +2,8 @@
 
 ## Purpose
 
-The network module coordinates network subnet definitions and firewall rules, allowing for centralised configuration of subnets and automatic propagation of these settings to other servers in the cluster.
+The network module coordinates network subnet definitions and firewall rules,
+allowing for centralised configuration of subnets and automatic propagation of these settings to other servers in the cluster.
 
 ## Entry Point
 
@@ -14,9 +15,11 @@ The network module coordinates network subnet definitions and firewall rules, al
 
 ## Architecture / Services / Scope
 
-- This module uses `getIOPrimaryHostAttr` to fetch the `server.network.subnets` configuration from the IO Coordinator (`server.ioPrimaryHost`), ensuring all servers in the cluster are aware of the network structure defined there.
+- This module uses `getIOPrimaryHostAttr` to fetch the `server.network.subnets` configuration from the IO Coordinator
+  (`server.ioPrimaryHost`), ensuring all servers in the cluster are aware of the network structure defined there.
 - The module generates `ip saddr` / `ip6 saddr` accept rules for the specified ports, allowing traffic only from the defined subnets.
-- These rules are appended to the `nftables` input chain through the `networking.firewall.extraInputRules` option. They apply to new and untracked flows only; established connections are accepted earlier by `conntrack`.
+- These rules are appended to the `nftables` input chain through the `networking.firewall.extraInputRules` option.
+  They apply to new and untracked flows only; established connections are accepted earlier by `conntrack`.
 
 ## Operational Notes / Assumptions
 

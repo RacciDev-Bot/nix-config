@@ -22,19 +22,27 @@ When `core.enable` is true, module applies shared defaults from `modules/nixos/c
 - enables PipeWire audio stack and disables PulseAudio when `core.audio.enable` is on,
 - enables Bluetooth stack, Blueman, and persisted Bluetooth state when `core.bluetooth.enable` is on,
 - enables NetworkManager and adds `network` to shared default groups when `core.network.enable` is on, and
-- on non-headless hosts, adds `video` and `i2c` groups and enables `dleyna`, `gnome-keyring`, `udisks2`, `colord`, `xserver.updateDbusEnvironment`, and `polkit`.
+- on non-headless hosts, adds `video` and `i2c` groups and enables `dleyna`, `gnome-keyring`, `udisks2`, `colord`,
+  `xserver.updateDbusEnvironment`, and `polkit`.
 
-Audio baseline also enables `security.rtkit`, adds `audio`, `pipewire`, and `rtkit` groups, installs udev rules for `rtc0` and `hpet`, and sets PAM limits for realtime audio workloads.
+Audio baseline also enables `security.rtkit`, adds `audio`, `pipewire`, and `rtkit` groups,
+installs udev rules for `rtc0` and `hpet`, and sets PAM limits for realtime audio workloads.
 
 Bluetooth baseline unblocks rfkill during activation and persists `/var/lib/bluetooth`.
 
 ### Firewall Backend
 
-Every host runs the `nftables` firewall backend, switched on in `modules/nixos/core/networking/default.nix` via `networking.nftables.enable`. No host opts out; rolling back means reverting the whole migration commit, because the firewall rule translations only take effect under this backend and are silently ignored without it.
+Every host runs the `nftables` firewall backend, switched on in `modules/nixos/core/networking/default.nix` via `networking.nftables.enable`.
+No host opts out; rolling back means reverting the whole migration commit,
+because the firewall rule translations only take effect under this backend and are silently ignored without it.
 
-- Docker hosts get `pkgs.iptables` added to the Docker daemon's `PATH`, because `dockerd` shells out to `iptables` for container NAT and the `nftables` backend no longer installs that binary. The `iptables` package in nixpkgs is the `nftables`-compatible build.
-- Tailscale hosts trust the interface named by `services.tailscale.interfaceName` at the firewall and run `tailscaled` in `nftables` mode. An accept rule inside the tailscaled table cannot override the drop policy of the NixOS input chain, so the interface has to be trusted explicitly.
-- Modules must not emit raw `iptables` rules: the backend asserts that `networking.firewall.extraCommands` and `extraStopCommands` are empty. Use `extraInputRules`, `extraForwardRules`, or a table under `networking.nftables.tables`.
+- Docker hosts get `pkgs.iptables` added to the Docker daemon's `PATH`,
+  because `dockerd` shells out to `iptables` for container NAT and the `nftables` backend no longer installs that binary.
+  The `iptables` package in nixpkgs is the `nftables`-compatible build.
+- Tailscale hosts trust the interface named by `services.tailscale.interfaceName` at the firewall and run `tailscaled` in `nftables` mode.
+  An accept rule inside the tailscaled table cannot override the drop policy of the NixOS input chain, so the interface has to be trusted explicitly.
+- Modules must not emit raw `iptables` rules: the backend asserts that `networking.firewall.extraCommands` and `extraStopCommands` are empty.
+  Use `extraInputRules`, `extraForwardRules`, or a table under `networking.nftables.tables`.
 
 ## Usage Example
 
@@ -71,4 +79,5 @@ Every host runs the `nftables` firewall backend, switched on in `modules/nixos/c
 
 ## Operational Notes / Assumptions
 
-These modules are imported through `modules/nixos/core/default.nix`. Most feature pages document their own `core.<name>` option namespaces, while some baseline modules such as [Nix](nix.md) apply unconditionally once imported.
+These modules are imported through `modules/nixos/core/default.nix`.
+Most feature pages document their own `core.<name>` option namespaces, while some baseline modules such as [Nix](nix.md) apply unconditionally once imported.

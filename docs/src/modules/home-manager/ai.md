@@ -2,11 +2,13 @@
 
 ## Purpose
 
-The `purpose.development.editors.ai` Home-Manager module configures editor and agent tooling for AI-assisted development, centred around OpenCode and shared skill directories.
+The `purpose.development.editors.ai` Home-Manager module configures editor
+and agent tooling for AI-assisted development, centred around OpenCode and shared skill directories.
 
 ## Entry Point
 
-- **Main file**: [`modules/home-manager/purpose/development/editors/ai/default.nix`](../../../../modules/home-manager/purpose/development/editors/ai/default.nix)
+- **Main file**:
+  [`modules/home-manager/purpose/development/editors/ai/default.nix`](../../../../modules/home-manager/purpose/development/editors/ai/default.nix)
 - **Supporting files**: module-local `skills/` directory containing the default skills
 
 ## Architecture / Services / Scope

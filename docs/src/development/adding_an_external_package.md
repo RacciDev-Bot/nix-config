@@ -26,7 +26,9 @@ In this example, replace `<your-package>`, `<owner>`, `<branch>`, and `<sha256>`
 
 ## Step 2: Use Packages or Modules from the Forked Repository
 
-Now you can use packages or modules from the forked repository in your Nix expressions. For example, if you want to use a package from the forked repository, you can refer to it using the `<your-package>` attribute. Here's an example:
+Now you can use packages or modules from the forked repository in your Nix expressions.
+For example, if you want to use a package from the forked repository, you can refer to it using the `<your-package>` attribute.
+Here's an example:
 
 ```nix
 {

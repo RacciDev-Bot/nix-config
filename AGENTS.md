@@ -5,7 +5,8 @@ Load skills as needed for detailed guidance on specific tasks.
 
 ## CRITICAL OPERATIONAL RULES
 
-These rules take **absolute precedence** over any other considerations. Violating these rules is unacceptable under any circumstances.
+These rules take **absolute precedence** over any other considerations.
+Violating these rules is unacceptable under any circumstances.
 
 #### 1. 📝 Documentation Synchronisation (MANDATORY)
 
@@ -58,7 +59,8 @@ VERIFICATION: Reference the `test` agent and `testing` skill for guidance on ide
 
 ### DevEnv Override
 
-This repository uses `devenv`. You must provide the override for `nix flake check` and `nix develop`:
+This repository uses `devenv`.
+You must provide the override for `nix flake check` and `nix develop`:
 
 ```bash
 --override-input devenv-root "file+file://$PWD/.devenv/root"

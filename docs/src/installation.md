@@ -92,7 +92,8 @@ ping nixos.org
 
 #### 3. Disk Setup
 
-Follow standard NixOS installation procedures for disk partitioning and filesystem setup as described in the [NixOS manual](https://nixos.org/manual/nixos/stable/index.html#sec-installation).
+Follow standard NixOS installation procedures for disk partitioning
+and filesystem setup as described in the [NixOS manual](https://nixos.org/manual/nixos/stable/index.html#sec-installation).
 
 #### 4. Generate Hardware Configuration
 

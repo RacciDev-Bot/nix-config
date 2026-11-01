@@ -15,7 +15,9 @@ Managed EDR (Endpoint Detection and Response) platform that protects systems by 
 
 ## Architecture / Services / Scope
 
-The module runs a single `huntress-agent` systemd service as `root`. The agent configuration is generated at `/etc/huntress/agent_config.yaml` during the service's `preStart` phase: a default configuration is written on first start, after which the account and organisation keys are merged in using `yaml-merge`.
+The module runs a single `huntress-agent` systemd service as `root`.
+The agent configuration is generated at `/etc/huntress/agent_config.yaml` during the service's `preStart` phase:
+a default configuration is written on first start, after which the account and organisation keys are merged in using `yaml-merge`.
 
 ## Secrets
 

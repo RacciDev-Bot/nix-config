@@ -6,9 +6,10 @@ The `image.nix` module provides image and VM-related configuration for server ho
 
 On first boot of a freshly installed host, the SSH private key must be provisioned.
 The public key is baked into the image at `/etc/ssh/ssh_host_ed25519_key.pub`, but the private key is deliberately not packaged.
-Instead, the activation script prompts the operator interactively to input the private key,
-validates it, and stores it at `core.openssh.hostPrivateKeyPath`, where OpenSSH and sops age decryption both read the same canonical file.
-Before reading input, the script saves the current `/dev/console` tty state, switches the console into canonical line mode for reliable multiline paste handling, and restores the original tty state on exit.
+Instead, the activation script prompts the operator interactively to input the private key, validates it,
+and stores it at `core.openssh.hostPrivateKeyPath`, where OpenSSH and sops age decryption both read the same canonical file.
+Before reading input, the script saves the current `/dev/console` tty state,
+switches the console into canonical line mode for reliable multiline paste handling, and restores the original tty state on exit.
 
 The script is enabled unconditionally on all server hosts as a no-op unless both of the following hold:
 
@@ -19,7 +20,8 @@ The script is enabled unconditionally on all server hosts as a no-op unless both
 
 The prompt ignores any lines before `-----BEGIN OPENSSH PRIVATE KEY-----`, then captures the key line-by-line until `-----END OPENSSH PRIVATE KEY-----`.
 If the final `END` line does not submit automatically, pressing `Ctrl+D` flushes that last line.
-Pressing `Ctrl+D` before the `BEGIN` line restarts the prompt with `No key provided`, and pressing `Ctrl+D` after `BEGIN` but before `END` discards the partial key and restarts the prompt.
+Pressing `Ctrl+D` before the `BEGIN` line restarts the prompt with `No key provided`,
+and pressing `Ctrl+D` after `BEGIN` but before `END` discards the partial key and restarts the prompt.
 
 The captured key is checked in two stages:
 
@@ -35,8 +37,10 @@ because the Proxmox LXC image variant sets `boot.isContainer = true` and therefo
 We override this behaviour for `build-vm` so that a runnable QEMU VM can be built from such hosts with the following options:
 
 - `boot.isContainer = false`: restores the initrd and normal VM boot.
-- `boot.loader.initScript.enable = true` together with `boot.loader.grub.enable = false`: avoids a unique-option conflict on `system.build.installBootLoader` between the grub and init-script loaders.
-- `virtualisation.qemu.consoles = [ "tty0" "ttyS0,115200n8" ]`: routes boot logs and `/dev/console` to the serial port so they are visible with `-nographic` (the last `console=` becomes `/dev/console`).
+- `boot.loader.initScript.enable = true` together with `boot.loader.grub.enable = false`:
+  avoids a unique-option conflict on `system.build.installBootLoader` between the grub and init-script loaders.
+- `virtualisation.qemu.consoles = [ "tty0" "ttyS0,115200n8" ]`: routes boot logs and `/dev/console` to the serial port
+  so they are visible with `-nographic` (the last `console=` becomes `/dev/console`).
 - `systemd.services."serial-getty@ttyS0".enable = true`: enables root autologin on the serial console so the VM is usable with `-nographic`.
 
 ### Building and running a VM

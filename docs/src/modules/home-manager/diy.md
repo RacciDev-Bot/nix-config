@@ -21,7 +21,8 @@ The printing module installs 3D-printing software and wires up persistent storag
 #### Git Sync
 
 The `gitSync` sub-module adds a long-running systemd user service backed by the packaged `orca-slicer-git-sync` helper.
-It watches the OrcaSlicer profile directory and automatically creates a git commit every time a profile file is added, changed, or removed. This gives a full revision history of slicer settings with zero manual effort.
+It watches the OrcaSlicer profile directory and automatically creates a git commit every time a profile file is added, changed, or removed.
+This gives a full revision history of slicer settings with zero manual effort.
 
 ##### Commit Message Convention
 
@@ -35,7 +36,8 @@ Commit messages are generated automatically based on the type of filesystem even
 
 Where:
 
-- **`<type>`** is the name of the first directory component under the repo root (e.g. `filament`, `process`, `machine`). Files placed directly at the root level use the fallback type `config`.
+- **`<type>`** is the name of the first directory component under the repo root (e.g. `filament`, `process`, `machine`).
+  Files placed directly at the root level use the fallback type `config`.
 - **`<name>`** is the filename stripped of its extension (e.g. a file named `Prusament_PLA.json` yields the name `Prusament_PLA`).
 
 **Examples:**
@@ -49,10 +51,14 @@ chore(machine): removed Prusa_MK4S
 ##### How It Works
 
 1. A systemd user service is started at login and kept alive by systemd.
-1. The service uses `inotifywait` (from `inotify-tools`) in one-shot mode inside a loop to detect any filesystem event under the repo path (excluding the `.git` directory).
-1. After an event is received the watcher sleeps for a short debounce period to absorb rapid bursts of writes (e.g. when OrcaSlicer rewrites multiple files at once).
-1. All pending changes are staged and committed **once per batch**. The commit message is derived from the first changed path in that batch, using the same profile-aware naming convention documented above.
-1. If the watched directory does not yet exist (e.g. OrcaSlicer has never been run), the service polls until it appears, then initialises the repository and starts watching.
+1. The service uses `inotifywait` (from `inotify-tools`) in one-shot mode inside a loop to detect any filesystem event
+   under the repo path (excluding the `.git` directory).
+1. After an event is received the watcher sleeps for a short debounce period to absorb rapid bursts of writes (e.g.
+   when OrcaSlicer rewrites multiple files at once).
+1. All pending changes are staged and committed **once per batch**.
+   The commit message is derived from the first changed path in that batch, using the same profile-aware naming convention documented above.
+1. If the watched directory does not yet exist (e.g. OrcaSlicer has never been run), the service polls until it appears,
+   then initialises the repository and starts watching.
 
 ### Usage Example
 

@@ -2,11 +2,9 @@
 
 ## Purpose
 
-The monitoring module provides a comprehensive observability stack for the server
-cluster using Prometheus (metrics), Loki (logs), Grafana (visualisation), and
-Grafana Alloy for authenticated OTLP ingestion.
-All components are configured as reusable NixOS modules with automatic
-cross-host discovery.
+The monitoring module provides a comprehensive observability stack for the server cluster using Prometheus (metrics),
+Loki (logs), Grafana (visualisation), and Grafana Alloy for authenticated OTLP ingestion.
+All components are configured as reusable NixOS modules with automatic cross-host discovery.
 
 The system consists of three layers:
 
@@ -109,7 +107,8 @@ Generating secure random secrets can be done with the following command:
 cat /dev/urandom | tr -dc 'A-Za-z0-9' | head -c 48
 ```
 
-The `MONITORING/GRAFANA/OAUTH_SECRET` must match the value in `hosts/server/<Application Server>/secrets.yaml` under `KANIDM/OAUTH2/GRAFANA_SECRET` (the Kanidm provisioning side).
+The `MONITORING/GRAFANA/OAUTH_SECRET` must match the value in `hosts/server/<Application Server>/secrets.yaml`
+under `KANIDM/OAUTH2/GRAFANA_SECRET` (the Kanidm provisioning side).
 
 ### mTLS CA scope
 
@@ -137,17 +136,23 @@ The client certificate uses `commonName = alloy-capture-relay` and `extendedKeyU
 The manual procedure below assumes `alloy-intermediate.crt` and `alloy-intermediate.key` from the [Internal mTLS CA](../security/internal_mtls_ca.md) procedure.
 `<io-primary>` is the host that defines `server.proxy.domain`.
 
-For new hosts, use the `provision-alloy-certs` helper. It reads the Fleet root and the Alloy intermediate from a KeePassXC vault, issues the certificates, SOPS-encrypts the output, and merges each new leaf back into the same vault:
+For new hosts, use the `provision-alloy-certs` helper.
+It reads the Fleet root and the Alloy intermediate from a KeePassXC vault, issues the certificates,
+SOPS-encrypts the output, and merges each new leaf back into the same vault:
 
 ```bash
 provision-alloy-certs --vault pki.kdbx --vault-password-file vault-pass nixdb nixauth nixstor
 ```
 
-The vault must contain `root/Fleet mTLS Root CA` with a `cert.pem` attachment and `intermediate/alloy-dynamic-capture/Alloy Dynamic Capture Intermediate CA` with `cert.pem` and `key.pem` attachments.
-Override them with `--root-entry` / `--root-common-name` and `--intermediate-entry` / `--intermediate-common-name`. The root and intermediate are validated against those common names before anything is issued.
+The vault must contain `root/Fleet mTLS Root CA` with a `cert.pem` attachment
+and `intermediate/alloy-dynamic-capture/Alloy Dynamic Capture Intermediate CA` with `cert.pem` and `key.pem` attachments.
+Override them with `--root-entry` / `--root-common-name` and `--intermediate-entry` / `--intermediate-common-name`.
+The root and intermediate are validated against those common names before anything is issued.
 
-Pass `--include-client` to also reissue the `nixmon` relay client certificate; the client certificate is skipped by default, and `--skip-client` states that explicitly.
-Leaves are stored under `leafs/alloy-dynamic-capture` with `cert.pem` and `key.pem` attachments, and the vault is backed up to `<db>.bak-<timestamp>` before each merge.
+Pass `--include-client` to also reissue the `nixmon` relay client certificate;
+the client certificate is skipped by default, and `--skip-client` states that explicitly.
+Leaves are stored under `leafs/alloy-dynamic-capture` with `cert.pem` and `key.pem` attachments,
+and the vault is backed up to `<db>.bak-<timestamp>` before each merge.
 The manual procedure below remains the reference for the certificate profiles.
 
 ```bash
@@ -207,13 +212,11 @@ The module configures four virtual hosts on Monitoring Coordinator:
 | Prometheus | `prometheus.${server.proxy.domain}` | LAN                           |
 | Loki       | `loki.${server.proxy.domain}`       | LAN                           |
 
-Grafana remains protected by the existing Kanidm-backed login flow. The OTLP
-ingestion endpoint is intended for machine-to-machine clients and requires an
-`Authorization: Bearer <token>` header on every request. The exposed OTLP/HTTP
-paths are the standard `/v1/metrics` and `/v1/logs` endpoints.
+Grafana remains protected by the existing Kanidm-backed login flow.
+The OTLP ingestion endpoint is intended for machine-to-machine clients and requires an `Authorization: Bearer <token>` header on every request.
+The exposed OTLP/HTTP paths are the standard `/v1/metrics` and `/v1/logs` endpoints.
 
-These are defined in `hosts/server/nixmon/default.nix` and collected by the IO
-Coordinator's Caddy configuration.
+These are defined in `hosts/server/nixmon/default.nix` and collected by the IO Coordinator's Caddy configuration.
 
 ### Alert Rules
 
@@ -354,7 +357,8 @@ When both of these are enabled on the monitoring coordinator:
 - `server.monitoring.logs.capture.relay.enable = true`
 
 A loopback relay service is started and Grafana contact points are provisioned.
-The dynamic capture API, relay, and control helper are packaged in `pkgs/alloy-dynamic-capture` and consumed by `modules/nixos/server/monitoring/logs/alloy.nix`:
+The dynamic capture API, relay, and control helper are packaged in `pkgs/alloy-dynamic-capture`
+and consumed by `modules/nixos/server/monitoring/logs/alloy.nix`:
 
 - `alloy-capture-<host>-enable`
 - `alloy-capture-<host>-disable`

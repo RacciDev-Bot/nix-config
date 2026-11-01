@@ -1,7 +1,8 @@
 # Python Development Shell
 
 This repository contains multiple Python scripts and packages.
-A dedicated Python development environment is provided via devenv to simplify development of these components, by providing all necessary dependencies for proper LSP support.
+A dedicated Python development environment is provided via devenv to simplify development of these components,
+by providing all necessary dependencies for proper LSP support.
 
 ## Entering the Python Shell
 
@@ -111,11 +112,13 @@ python312Packages.your-new-package
 
 ### ModuleNotFoundError
 
-If you see `ModuleNotFoundError: No module named 'xxx'`, the package may not be in the python shell. Verify it's included in the packages list in `flake/dev/devenv.nix`.
+If you see `ModuleNotFoundError: No module named 'xxx'`, the package may not be in the python shell.
+Verify it's included in the packages list in `flake/dev/devenv.nix`.
 
 ### Python Version Mismatch
 
-Some packages require Python 3.12. If you need a different version:
+Some packages require Python 3.12.
+If you need a different version:
 
 1. Modify `python312` reference in `flake/dev/devenv.nix`
 1. Update corresponding `python312Packages` references
@@ -123,7 +126,8 @@ Some packages require Python 3.12. If you need a different version:
 
 ### Permissions Errors with pystemd
 
-The `pystemd` package requires D-Bus access. Ensure you're running within a proper devenv session, not in a sandboxed environment.
+The `pystemd` package requires D-Bus access.
+Ensure you're running within a proper devenv session, not in a sandboxed environment.
 
 ## See Also
 

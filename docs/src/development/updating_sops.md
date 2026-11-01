@@ -1,6 +1,8 @@
 # Updating SOPS Rules
 
-`update-sops` first regenerates managed `sops-keys.nix`, then regenerates `.sops.yaml` from repository layout. Host and home entries are sorted by name for stable output. Run it after adding, removing, or rotating a host key or home user.
+`update-sops` first regenerates managed `sops-keys.nix`, then regenerates `.sops.yaml` from repository layout.
+Host and home entries are sorted by name for stable output.
+Run it after adding, removing, or rotating a host key or home user.
 
 ## Host Discovery
 
@@ -36,7 +38,10 @@ Host-specific rules also cover nested SOPS files under that host directory.
 }
 ```
 
-Host recipients come from `ssh_host_ed25519_key.pub`. Home recipients come from `home/{username}/id_ed25519.pub`. The current user's name comes from `whoami`; that user's home recipient is used as the personal recipient in every generated SOPS rule. The current user must have a home public key file.
+Host recipients come from `ssh_host_ed25519_key.pub`.
+Home recipients come from `home/{username}/id_ed25519.pub`.
+The current user's name comes from `whoami`; that user's home recipient is used as the personal recipient in every generated SOPS rule.
+The current user must have a home public key file.
 
 Every directory under `home/`, except `home/shared/`, gets a rule for:
 
@@ -53,7 +58,9 @@ Every generated rule starts with two always-present recipients, in this order:
 1. current user's `home/{username}/id_ed25519.pub` converted with `ssh-to-age` — personal age key
 1. `sops-keys.nix` `deployer` value — automated deployer age key
 
-The updater defines this policy in `get-always-present-age-keys`. Host-specific rules append that host's age recipient. Global host rules append all applicable host recipients in the same stable order used by `sops-keys.nix`.
+The updater defines this policy in `get-always-present-age-keys`.
+Host-specific rules append that host's age recipient.
+Global host rules append all applicable host recipients in the same stable order used by `sops-keys.nix`.
 
 ## Usage
 
@@ -69,10 +76,13 @@ Check for drift without writing:
 update-sops --check
 ```
 
-By default, updater changes only `sops-keys.nix` and `.sops.yaml`. To also update recipient metadata in every encrypted SOPS file under `hosts/` and `home/`, opt in explicitly:
+By default, updater changes only `sops-keys.nix` and `.sops.yaml`.
+To also update recipient metadata in every encrypted SOPS file under `hosts/` and `home/`, opt in explicitly:
 
 ```bash
 update-sops --update-secrets
 ```
 
-This runs `sops updatekeys --yes` for each file reported as encrypted by `sops filestatus`, including non-YAML formats. It can re-encrypt file metadata and requires an available SOPS decryption identity. `--update-secrets` cannot be combined with `--check`.
+This runs `sops updatekeys --yes` for each file reported as encrypted by `sops filestatus`, including non-YAML formats.
+It can re-encrypt file metadata and requires an available SOPS decryption identity.
+`--update-secrets` cannot be combined with `--check`.

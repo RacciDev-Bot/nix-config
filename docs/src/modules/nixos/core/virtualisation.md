@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Enable libvirt/QEMU virtualisation with VFIO GPU passthrough, Looking Glass shared memory, bridge networking, custom OVMF firmware metadata, and per-guest isolation helpers that reserve host CPUs, detach GPUs, and block host sleep while guests run.
+Enable libvirt/QEMU virtualisation with VFIO GPU passthrough, Looking Glass shared memory, bridge networking,
+custom OVMF firmware metadata, and per-guest isolation helpers that reserve host CPUs, detach GPUs, and block host sleep while guests run.
 
 ## Entry Point
 
@@ -37,7 +38,8 @@ Guest-specific CPU ranges are passed through tiny generated wrappers, while shar
 
 ### Firmware and Persistence
 
-Module extends libvirt startup to populate `/run/libvirt/nix-ovmf` with secure-boot and Microsoft-enrolled OVMF firmware files, then publishes matching firmware JSON metadata under `/var/lib/qemu/firmware`.
+Module extends libvirt startup to populate `/run/libvirt/nix-ovmf` with secure-boot
+and Microsoft-enrolled OVMF firmware files, then publishes matching firmware JSON metadata under `/var/lib/qemu/firmware`.
 
 Persisted paths include:
 
@@ -50,5 +52,6 @@ Persisted paths include:
 ## Operational Notes / Assumptions
 
 - `core.virtualisation.cpuCores` is validated by both option type and assertion, so values below `4` fail evaluation.
-- `vmUsers` is opt-in. Only listed users receive `kvm` and `libvirtd` access.
+- `vmUsers` is opt-in.
+  Only listed users receive `kvm` and `libvirtd` access.
 - Hook generation assumes guest naming convention where `<name>-single` means single-GPU passthrough workflow.
